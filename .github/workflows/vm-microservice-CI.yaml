@@ -18,7 +18,7 @@ jobs:
               run: |
                 COMMIT_AUTHOR=$(git log -1 --pretty=%an)
                 COMMIT_ID=$(git rev-parse --short "$GITHUB_SHA")
-                docker build \
+                docker buildx build \
                   --build-arg BUILDER_IMAGE=${{ env.BUILDER_IMAGE }} \
                   --label AUTHOR=${COMMIT_AUTHOR} \
                   --label COMMIT_ID=${COMMIT_ID} \
