@@ -1,4 +1,4 @@
-ARG BUILDER_IMAGE=maven:3.9.9-ibm-semeru-23-jammy
+ARG BUILDER_IMAGE=maven:3.9.9-ibm-semeru-17-focal
 FROM ${BUILDER_IMAGE}
 
 # Set the working directory
