@@ -8,8 +8,8 @@ jobs:
     build-image_tag_update:
         runs-on: ubuntu-latest
         env:
-            IMAGE_NAME: "abh/solutioning-service:v0.0.1"
-            BUILDER_IMAGE: "${{ secrets.IMAGE_REGISTRY }}/pg-public/maven:3.9.9-ibm-semeru-23-jammy"
+            IMAGE_NAME: "vm/microservice:v0.0.1"
+            BUILDER_IMAGE: "${{ secrets.IMAGE_REGISTRY }}/maven:3.9.9-ibm-semeru-23-jammy"
         steps:
             - name: Checkout code
               uses: actions/checkout@v2

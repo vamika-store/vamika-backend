@@ -10,8 +10,8 @@ COPY . .
 # Build the code
 RUN mvn clean \
     && mvn -DskipTests=true package \
-    && mkdir -p /abh \
-    && mv /vm-build/target/vm-microservice-*.jar /abh/vm-microservice.jar \
+    && mkdir -p /vm \
+    && mv /vm-build/target/vm-microservice-*.jar /vm/vm-microservice.jar \
     && rm -rf /vm-build/*
 
 # Set the working directory
