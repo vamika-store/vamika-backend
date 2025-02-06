@@ -22,7 +22,8 @@ jobs:
                   --build-arg BUILDER_IMAGE=${{ env.BUILDER_IMAGE }} \
                   --label AUTHOR=${COMMIT_AUTHOR} \
                   --label COMMIT_ID=${COMMIT_ID} \
-                  -t ${{ secrets.IMAGE_REGISTRY }}/${{ env.IMAGE_NAME }} .
+                  -t ${{ secrets.IMAGE_REGISTRY }}/${{ env.IMAGE_NAME }} \
+                  .
             - name: Push Docker image
               run: |
                 docker push ${{ secrets.IMAGE_REGISTRY }}/${{ env.IMAGE_NAME }}
