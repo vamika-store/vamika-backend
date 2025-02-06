@@ -1,0 +1,32 @@
+name: VM-Microservices
+
+on: 
+    push:
+        branches:
+            - main
+jobs:
+    build-image_tag_update:
+        runs-on: ubuntu-latest
+        env:
+            IMAGE_NAME: "abh/solutioning-service:v0.0.1"
+            BUILDER_IMAGE: "${{ secrets.IMAGE_REGISTRY }}/pg-public/maven:3.9.9-ibm-semeru-23-jammy"
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v2
+            - name: Docker Login
+              run: |
+                docker login -u ${{ secrets.IMAGE_REGISTRY_USERNAME }} \
+                -p ${{ secrets.IMAGE_REGISTRY_TOKEN }} ${{ secrets.IMAGE_REGISTRY }}
+            - name: Docker Build
+              run: |
+                COMMIT_AUTHOR=$(git log -1 --pretty=%an)
+                COMMIT_ID=$(git rev-parse --short "$GITHUB_SHA")
+                docker build --build-arg BUILDER_IMAGE=${{ env.BUILDER_IMAGE }} \
+                --label AUTHOR=${COMMIT_AUTHOR} --label COMMIT_ID=${COMMIT_ID} \
+                -t ${{ secrets.IMAGE_REGISTRY }}/${{ env.IMAGE_NAME }} .
+            - name: Push Docker image
+              run: |
+                docker push ${{ secrets.IMAGE_REGISTRY }}/${{ env.IMAGE_NAME }}
+            - name: Docker Logout
+              run: |
+                docker logout ${{ secrets.IMAGE_REGISTRY }}

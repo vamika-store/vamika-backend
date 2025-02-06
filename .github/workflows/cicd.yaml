@@ -1,0 +1,35 @@
+name: VM-Microservice
+
+on: 
+    push:
+        branches:
+            - main
+jobs:
+    build-image_tag_update:
+        runs-on: ubuntu-latest
+        env:
+          IMG_NAME:
+          BUILDER_IMAGE:
+        steps:
+          - name: Checkout code
+            uses: actions/checkout@v3
+          - name: Build Docker Image
+            run: docker build -t acr.azurecr.io/vm-microservice:latest .
+          - name: Push to ACR
+            run: |
+              echo "${{ secrets.AZURE_ACR_PASSWORD }}" | docker login acr.azurecr.io -u ${{ secrets.AZURE_ACR_USERNAME }} --password-stdin
+              docker push acr.azurecr.io/vm-microservice:latest
+          - name: Update GitOps Repository
+            run: |
+              git clone https://github.com/vamika-store/vm-microservice
+              cd gitops-repo
+              sed -i 's/tag: .*/tag: latest/' charts/vm-microservice/values.yaml
+              git add .
+              git commit -m "Updated microservice image"
+              git push origin main
+
+
+
+
+
+            
