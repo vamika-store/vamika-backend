@@ -1,9 +1,7 @@
 name: VM-Microservice
 
 on: 
-    push:
-        branches:
-            - main
+    workflow_dispatch:
 jobs:
     build-image_tag_update:
         runs-on: ubuntu-latest
