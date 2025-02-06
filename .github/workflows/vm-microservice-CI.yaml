@@ -7,7 +7,7 @@ jobs:
         runs-on: ubuntu-latest
         env:
             IMAGE_NAME: "kubevamshi/vamika-backend:v0.0.1"
-            BUILDER_IMAGE: "${{ secrets.IMAGE_REGISTRY }}/maven:3.9.9-ibm-semeru-17-focal"
+            BUILDER_IMAGE: "maven:3.9.9-ibm-semeru-17-focal"
         steps:
             - name: Checkout code
               uses: actions/checkout@v2
