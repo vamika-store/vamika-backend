@@ -11,7 +11,7 @@ COPY . .
 RUN mvn clean \
     && mvn -DskipTests=true package \
     && mkdir -p /vm \
-    && mv /vm-build/target/vm-microservice-*.jar /vm/vm-microservice.jar \
+    && mv /vm-build/target/vamika-*.jar /vm/vm-microservice.jar \
     && rm -rf /vm-build/*
 
 # Set the working directory
