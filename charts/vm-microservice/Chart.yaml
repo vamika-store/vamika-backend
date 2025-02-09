@@ -1,0 +1,4 @@
+apiVersion: v2
+name: backend
+description: Example of the chart component for the K8S V2 Platform
+version: 1.0.3

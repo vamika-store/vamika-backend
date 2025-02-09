@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vm-backend
+  namespace: backend
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: vm-frontend
+  template:
+    metadata:
+      labels:
+        app: vm-frontend
+    spec:
+      containers:
+        - name: vm-frontend
+          image: "{{ Values-k8s.image }}:{{ (.Values-k8s.image).tag | default "0.0.1" }}"
+          ports:
+            - containerPort: 3000
+          env:
+            - name: DB_HOST
+              value: {{ .Values.database.host }}
+            - name: DB_PORT
+              value: "{{ .Values.database.port }}"
+            - name: DB_NAME
+              value: {{ .Values.database.name }}
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.database.userSecret }}
+                  key: username
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.database.userSecret }}
+                  key: password
+          {{- with .Values.resources }}
+          resources:
+            {{- toYaml . | trim | nindent 12 }}
+          {{- end }}
+          {{- with .Values.securityContext }}
+          securityContext:
+            {{- toYaml . | trim | nindent 12 }}
+          {{- end }}

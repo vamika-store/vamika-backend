@@ -1,0 +1,14 @@
+replicaCount: 2
+resources:
+  requests:
+    memory: 100Mi
+    cpu: 100m
+  limits:
+    cpu: 150m
+    memory: 150Mi
+securityContext:
+  readOnlyRootFilesystem: true
+  allowPrivilegeEscalation: false
+  runAsNonRoot: true
+  runAsUser: 999
+createNamespace: true
