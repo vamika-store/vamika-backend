@@ -7,14 +7,14 @@ spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: vm-frontend
+      app: vm-backend
   template:
     metadata:
       labels:
-        app: vm-frontend
+        app: vm-backend
     spec:
       containers:
-        - name: vm-frontend
+        - name: vm-backend
           image: "{{ Values-k8s.image }}:{{ (.Values-k8s.image).tag | default "0.0.1" }}"
           ports:
             - containerPort: 3000
