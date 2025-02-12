@@ -10,8 +10,8 @@ jobs:
             IMAGE_NAME: "vamika-backend:$GITHUB_SHA"
             BUILDER_IMAGE: "maven:3.9.9-ibm-semeru-17-focal"
         steps:
-            - name: Checkout code
-              uses: actions/checkout@v2
+            # - name: Checkout code
+            #   uses: actions/checkout@v2
             # - name: Docker Login
             #   run: |
             #     echo "${{ secrets.IMAGE_REGISTRY_TOKEN }}" | docker login -u ${{ secrets.IMAGE_REGISTRY_USERNAME }} --password-stdin
@@ -44,5 +44,5 @@ jobs:
                 exit 1
                 git add charts/vm-microservice/values.yaml
                 git commit -m "Update backend image tag to $GITHUB_SHA"
-                git push
+                git push origin main
 
