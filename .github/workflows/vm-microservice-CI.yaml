@@ -39,9 +39,7 @@ jobs:
                 cd vamika-backend
                 ls -R
                 sed -i 's|tag: .*| tag: "$GITHUB_SHA"|' ./charts/vm-microservice/values.yaml
+                fit add charts/vm-microservice/values.yaml
                 git commit -m "Update backend image tag to $GITHUB_SHA"
-
-            - name: Update Flux CD Git repository
-              run: |
                 git push
 
