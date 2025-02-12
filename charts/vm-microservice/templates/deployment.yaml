@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: vm-backend
-          image: "{{ Values-k8s.image }}:{{ (.Values-k8s.image).tag | default "0.0.1" }}"
+          image: "{{ Values.image }}:{{ (.Values.image).tag | default "0.0.1" }}"
           ports:
             - containerPort: 3000
           env:

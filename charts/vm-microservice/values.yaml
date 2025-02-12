@@ -1,4 +1,17 @@
 replicaCount: 2
+
+image:
+  repository: kubevamshi/vamika-backend
+  tag: latest
+  pullPolicy: Always
+
+  
+database:
+  host: postgres.backend.svc.cluster.local
+  port: 5432
+  name: backenddb
+  userSecret: postgres-secret
+  
 resources:
   requests:
     memory: 100Mi

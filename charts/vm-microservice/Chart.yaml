@@ -1,4 +1,4 @@
 apiVersion: v2
 name: backend
-description: Example of the chart component for the K8S V2 Platform
+description: A chart is for deployment backend vm-microservice
 version: 1.0.3
