@@ -33,6 +33,8 @@ jobs:
             #     docker logout ${{ secrets.IMAGE_REGISTRY }}
             - name: clone fluxcd gitops Repo
               run: |
+                git config --global user.email "chvamshikrishna24@gmail.com"
+                git config --global user.name "vamshireddy24"
                 git clone https://github.com/vamika-store/vamika-backend.git
                 cd vamika-backend
                 ls -R
