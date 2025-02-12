@@ -7,7 +7,7 @@ jobs:
     build-image_tag_update:
         runs-on: ubuntu-latest
         env:
-            IMAGE_NAME: "vamika-backend:${{ github.sha }}"
+            IMAGE_NAME: "vamika-backend:$GITHUB_SHA"
             BUILDER_IMAGE: "maven:3.9.9-ibm-semeru-17-focal"
         steps:
             - name: Checkout code
@@ -39,7 +39,7 @@ jobs:
                 git clone https://github.com/vamika-store/vamika-backend.git
                 cd vamika-backend
                 ls -R
-                sed -i 's|tag: .*| tag: "${{ github.sha }}"|' ./chart/vm-microservice/values.yaml
-                git commit -am "Update backend image tag to ${{ github.sha }}"
+                sed -i 's|tag: .*| tag: "$GITHUB_SHA"|' ./chart/vm-microservice/values.yaml
+                git commit -am "Update backend image tag to $GITHUB_SHA"
                 git push
 
