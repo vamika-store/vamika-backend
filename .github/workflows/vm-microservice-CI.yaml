@@ -31,6 +31,11 @@ jobs:
             # - name: Docker Logout
             #   run: |
             #     docker logout ${{ secrets.IMAGE_REGISTRY }}
+
+            - name: Enable Debug Logging
+              run: |
+                echo "GITHUB_SHA= ${GITHUB_SHA}"
+                echo "Running Git commands..."
             - name: clone fluxcd gitops Repo
               run: |
                 git config --global user.email "chvamshikrishna24@gmail.com"
