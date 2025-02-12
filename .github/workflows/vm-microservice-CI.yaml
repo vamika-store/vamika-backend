@@ -41,7 +41,8 @@ jobs:
                   sed -i 's|tag: .*| tag: "'"$GITHUB_SHA"'"|' ./charts/vm-microservice/values.yaml
                 else
                   echo "Error: values.yaml not found!"
-                exit 1
+                  exit 1
+                fi
                 git add charts/vm-microservice/values.yaml
                 git commit -m "Update backend image tag to $GITHUB_SHA"
                 git push origin main
