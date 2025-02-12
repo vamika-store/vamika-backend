@@ -39,7 +39,8 @@ jobs:
             - name: Checkout Repository
               uses: actions/checkout@v4
               with:
-                 persist-credentials: true  # Ensures authentication persists
+                 repository: vamshireddy24/vamika-backend
+                 persist-credentials: true
             - name: clone fluxcd gitops Repo
               run: |
                 git config --global user.email "chvamshikrishna24@gmail.com"
