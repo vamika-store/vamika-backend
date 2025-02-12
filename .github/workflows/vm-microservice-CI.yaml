@@ -38,11 +38,11 @@ jobs:
                 git clone https://github.com/vamika-store/vamika-backend.git
                 cd vamika-backend
                 if [ -f "charts/vm-microservice/values.yaml" ]; then 
-                  sed -i 's|tag: .*| tag: "${{ github.sha }}"|' ./charts/vm-microservice/values.yaml
+                  sed -i 's|tag: .*| tag: "'"$GITHUB_SHA"'"|' ./charts/vm-microservice/values.yaml
                 else
                   echo "Error: values.yaml not found!"
                 exit 1
-                fit add charts/vm-microservice/values.yaml
+                git add charts/vm-microservice/values.yaml
                 git commit -m "Update backend image tag to $GITHUB_SHA"
                 git push
 
