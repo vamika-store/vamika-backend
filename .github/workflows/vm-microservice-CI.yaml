@@ -2,7 +2,7 @@ name: Vamika-backend
 
 on: 
     workflow_dispatch:
-    
+
 jobs:
     build-image_tag_update:
         runs-on: ubuntu-latest
@@ -38,7 +38,7 @@ jobs:
                 git config --global user.namen "vamshi"
                 git clone https://github.com/vamika-store/vamika-backend.git
                 cd vamika-backend
-                sed -i 's|tag: .*| tag: "${{ github.sha }}"|' ./charts/values.yaml
+                sed -i 's|tag: .*| tag: "${{ github.sha }}"|' ./chart/vm-microservice/values.yaml
                 git commit -am "Update backend image tag to ${{ github.sha }}"
                 git push
 
