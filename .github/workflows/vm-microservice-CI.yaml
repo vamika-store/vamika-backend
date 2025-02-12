@@ -39,7 +39,8 @@ jobs:
 
             - name: Update Flux CD Git repository
               run: |
+                ls -R
                 sed -i 's|tag: .*| tag: "$GITHUB_SHA"|' values.yaml
-                git commit -am "Update backend image tag to $GITHUB_SHA"
+                git commit -m "Update backend image tag to $GITHUB_SHA"
                 git push
 
