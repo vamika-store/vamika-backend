@@ -31,7 +31,12 @@ jobs:
             - name: Docker Logout
               run: |
                 docker logout ${{ secrets.IMAGE_REGISTRY }}
-            
+            - name: clone fluxcd gitops Repo
+              run: |
+                git clone https://github.com/vamika-store/vm-microservice.git
+                cd vm-microservice/chart/vm-microservice/
+                ls -R
+
             - name: Update Flux CD Git repository
               run: |
                 git config --global user.email "chvamshikrishna24@gmail.com"
