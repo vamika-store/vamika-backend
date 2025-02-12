@@ -37,6 +37,9 @@ jobs:
                 echo "GITHUB_SHA= ${GITHUB_SHA}"
                 echo "Running Git commands..."
             - name: clone fluxcd gitops Repo
+              uses: actions/checkout@v4
+              with:
+                 persist-creadentials: true  # Ensures authentication persists
               run: |
                 git config --global user.email "chvamshikrishna24@gmail.com"
                 git config --global user.name "vamshireddy24"
