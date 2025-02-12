@@ -34,7 +34,7 @@ jobs:
             - name: clone fluxcd gitops Repo
               run: |
                 git clone https://github.com/vamika-store/vamika-backend.git
-                cd vamika-backend/charts/vm-microservice/
+                cd vamika-backend
                 ls -R
                 sed -i 's|tag: .*| tag: "$GITHUB_SHA"|' ./charts/vm-microservice/values.yaml
                 git commit -m "Update backend image tag to $GITHUB_SHA"
