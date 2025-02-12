@@ -39,7 +39,7 @@ jobs:
             - name: Checkout Repository
               uses: actions/checkout@v4
               with:
-                 persist-creadentials: true  # Ensures authentication persists
+                 persist-credentials: true  # Ensures authentication persists
             - name: clone fluxcd gitops Repo
               run: |
                 git config --global user.email "chvamshikrishna24@gmail.com"
