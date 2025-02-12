@@ -34,7 +34,7 @@ jobs:
             - name: clone fluxcd gitops Repo
               run: |
                 git clone https://github.com/vamika-store/vamika-backend.git
-                cd vamika-backend/chart/vm-microservice/
+                cd vamika-backend/charts/vm-microservice/
                 ls -R
 
             - name: Update Flux CD Git repository
