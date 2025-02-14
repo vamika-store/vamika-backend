@@ -2,7 +2,7 @@ replicaCount: 2
 
 image:
   repository: kubevamshi/vamika-backend
-   tag: "$GITHUB_SHA"
+    tag: "$GITHUB_SHA"
   pullPolicy: Always
 
   
