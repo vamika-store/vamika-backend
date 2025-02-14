@@ -31,15 +31,14 @@ jobs:
             - name: Docker Logout
               run: |
                 docker logout ${{ secrets.IMAGE_REGISTRY }}
-            - name: clone fluxcd gitops Repo
+            - name: Update values.yaml with new image tag
               run: |
                 git config --global user.email "chvamshikrishna24@gmail.com"
                 git config --global user.name "vamshireddy24"
                 git clone https://github.com/vamika-store/vamika-backend.git
-                git remote set-url origin https://x-access-token:${{ secrets.GH_PAT }}@github.com/vamika-store/vamika-backend.git
                 cd vamika-backend
-                sed -i 's|tag: .*| tag: "'"$GITHUB_SHA"'"|' charts/vm-microservice/values.yaml
+                sed -i "s|tag: .*| tag: "'"$GITHUB_SHA"'"|g" charts/vm-microservice/values.yaml
                 git add charts/vm-microservice/values.yaml
                 git commit -m "Update backend image tag to $GITHUB_SHA"
-                git push origin main
+                git push https://x-access-token:${{ secrets.GH_PAT }}@github.com/vamika-store/vamika-backend.git main
 
