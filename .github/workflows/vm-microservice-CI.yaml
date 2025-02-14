@@ -31,16 +31,6 @@ jobs:
             # - name: Docker Logout
             #   run: |
             #     docker logout ${{ secrets.IMAGE_REGISTRY }}
-
-            - name: Enable Debug Logging
-              run: |
-                echo "GITHUB_SHA= ${GITHUB_SHA}"
-                echo "Running Git commands..."
-            - name: Checkout Repository
-              uses: actions/checkout@v4
-              with:
-                 repository: vamshireddy24/vamika-backend
-                 persist-credentials: true
             - name: clone fluxcd gitops Repo
               run: |
                 git config --global user.email "chvamshikrishna24@gmail.com"
