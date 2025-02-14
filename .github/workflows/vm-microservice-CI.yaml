@@ -10,27 +10,27 @@ jobs:
             IMAGE_NAME: "vamika-backend:$GITHUB_SHA"
             BUILDER_IMAGE: "maven:3.9.9-ibm-semeru-17-focal"
         steps:
-            # - name: Checkout code
-            #   uses: actions/checkout@v2
-            # - name: Docker Login
-            #   run: |
-            #     echo "${{ secrets.IMAGE_REGISTRY_TOKEN }}" | docker login -u ${{ secrets.IMAGE_REGISTRY_USERNAME }} --password-stdin
-            # - name: Docker Build
-            #   run: |
-            #     COMMIT_AUTHOR=$(git log -1 --pretty=%an)
-            #     COMMIT_ID=$(git rev-parse --short "$GITHUB_SHA")
-            #     docker buildx build \
-            #       --build-arg BUILDER_IMAGE="${{ env.BUILDER_IMAGE }}" \
-            #       --label "AUTHOR=${COMMIT_AUTHOR}" \
-            #       --label "COMMIT_ID=${COMMIT_ID}" \
-            #       -t "${{ secrets.IMAGE_REGISTRY }}/${{ env.IMAGE_NAME }}" \
-            #       .
-            # - name: Push Docker image
-            #   run: |
-            #     docker push ${{ secrets.IMAGE_REGISTRY }}/${{ env.IMAGE_NAME }}
-            # - name: Docker Logout
-            #   run: |
-            #     docker logout ${{ secrets.IMAGE_REGISTRY }}
+            - name: Checkout code
+              uses: actions/checkout@v2
+            - name: Docker Login
+              run: |
+                echo "${{ secrets.IMAGE_REGISTRY_TOKEN }}" | docker login -u ${{ secrets.IMAGE_REGISTRY_USERNAME }} --password-stdin
+            - name: Docker Build
+              run: |
+                COMMIT_AUTHOR=$(git log -1 --pretty=%an)
+                COMMIT_ID=$(git rev-parse --short "$GITHUB_SHA")
+                docker buildx build \
+                  --build-arg BUILDER_IMAGE="${{ env.BUILDER_IMAGE }}" \
+                  --label "AUTHOR=${COMMIT_AUTHOR}" \
+                  --label "COMMIT_ID=${COMMIT_ID}" \
+                  -t "${{ secrets.IMAGE_REGISTRY }}/${{ env.IMAGE_NAME }}" \
+                  .
+            - name: Push Docker image
+              run: |
+                docker push ${{ secrets.IMAGE_REGISTRY }}/${{ env.IMAGE_NAME }}
+            - name: Docker Logout
+              run: |
+                docker logout ${{ secrets.IMAGE_REGISTRY }}
             - name: clone fluxcd gitops Repo
               run: |
                 git config --global user.email "chvamshikrishna24@gmail.com"
@@ -38,8 +38,7 @@ jobs:
                 git clone https://github.com/vamika-store/vamika-backend.git
                 git remote set-url origin https://x-access-token:${{ secrets.GH_PAT }}@github.com/vamika-store/vamika-backend.git
                 cd vamika-backend
-                sed -i 's|tag: .*| tag: "'"$GITHUB_SHA"'"|' ./charts/vm-microservice/values.yaml
-               
+                sed -i 's|tag: .*| tag: ""'"|' charts/vm-microservice/values.yaml
                 git add charts/vm-microservice/values.yaml
                 git commit -m "Update backend image tag to $GITHUB_SHA"
                 git push origin main
