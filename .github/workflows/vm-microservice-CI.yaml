@@ -6,7 +6,7 @@ on:
             - main
     push:
         paths-ignore:
-            - charts/vm-microservice/values.yaml
+            - 'charts/vm-microservice/values.yaml'
 jobs:
   build-image_tag_update:
     runs-on: ubuntu-latest
