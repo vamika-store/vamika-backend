@@ -41,7 +41,7 @@ jobs:
             git config --global user.name "vamshireddy24"
             git clone https://github.com/vamika-store/vamika-backend.git
             cd vamika-backend
-            git checkout origin/dev
+            git checkout dev
             sed -i "s|tag: .*|tag: \"${{ env.VERSION }}\"|g" charts/vm-microservice/values.yaml
             git add charts/vm-microservice/values.yaml
             git commit -m "Update backend image tag to ${{ env.VERSION }}"
