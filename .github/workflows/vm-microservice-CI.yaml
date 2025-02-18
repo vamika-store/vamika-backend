@@ -29,7 +29,7 @@ jobs:
   build-image_tag_update:
     needs: build-and-test
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'  # Run only when merged into main
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'  # Run only when merged into main
     env:
         IMAGE_NAME: "vamika-backend"
         BUILDER_IMAGE: "maven:3.9.9-ibm-semeru-17-focal"
