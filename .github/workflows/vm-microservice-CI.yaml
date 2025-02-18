@@ -44,5 +44,5 @@ jobs:
             sed -i "s|tag: .*|tag: \"${{ env.VERSION }}\"|g" charts/vm-microservice/values.yaml
             git add charts/vm-microservice/values.yaml
             git commit -m "Update backend image tag to ${{ env.VERSION }}"
-            git push https://x-access-token:${{ secrets.GH_PAT }}@github.com/vamika-store/vamika-backend.git dev
+            git push https://x-access-token:${{ secrets.GH_PAT }}@github.com/vamika-store/vamika-backend.git origin dev
 
