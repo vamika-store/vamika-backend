@@ -2,7 +2,7 @@ replicaCount: 2
 
 image:
   repository: kubevamshi/vamika-backend
-  tag: "v1.0.0-0218152026"
+  tag: "v1.0.0-0218152111"
   pullPolicy: Always
 
   
