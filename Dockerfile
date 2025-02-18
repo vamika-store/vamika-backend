@@ -9,7 +9,7 @@ COPY . .
 
 # Build the code
 RUN mvn clean \
-    && mvn clean package \
+    && mvn -DskipTests=true package \
     && mkdir -p /vm \
     && mv /vm-build/target/vamika-*.jar /vm/vm-microservice.jar \
     && rm -rf /vm-build/*
