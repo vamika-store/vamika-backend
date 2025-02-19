@@ -4,8 +4,6 @@ on:
     pull_request:
         branches:
             - main
-        paths-ignore:
-            - 'charts/vm-microservice/values.yaml'
 jobs:
   build-image_tag_update:
     runs-on: ubuntu-latest
