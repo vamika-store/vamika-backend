@@ -27,7 +27,7 @@ jobs:
         run: mvn clean package -DskipTests
 
       - name: Run unit tests
-        run: mvn test
+        run: mvn test jacoco:report
 
       - name: Generate test coverage report with JaCoCo
         run: mvn verify
