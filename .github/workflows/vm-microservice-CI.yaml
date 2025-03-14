@@ -46,4 +46,20 @@ jobs:
             git add charts/vm-microservice/values.yaml
             git commit -m "Update backend image tag to ${{ env.VERSION }} [skip ci]"
             git push https://x-access-token:${{ secrets.GH_PAT }}@github.com/vamika-store/vamika-backend.git ${{ github.head_ref }}
+        - name: Install Snyk CLI
+          run: npm install -g snyk
+
+        - name: Snyk Dependency Scan
+          env:
+            SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+          run: |
+            snyk auth ${{ secrets.SNYK_TOKEN }}
+            snyk test --all-projects
+
+        - name: Snyk Docker Image Scan
+          env:
+            SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+          run: |
+            snyk auth ${{ secrets.SNYK_TOKEN }}
+            snyk container test "${{ secrets.IMAGE_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.VERSION }}"
 
