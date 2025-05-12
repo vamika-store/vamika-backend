@@ -1,0 +1,39 @@
+name: Automation testing-QA
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+jobs:
+  build:
+    name: Build and Push Docker Image
+    runs-on: ubuntu-latest
+           
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+
+      - name: Run Unit Tests
+        run: ./mvnw test
+
+      - name: Run Integration Tests
+        run: ./mvnw verify
+
+      - name: Generate Test Report
+        run: |
+          mkdir -p test-reports
+          cp target/surefire-reports/*.xml test-reports/
+
+      - name: Upload Test Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-reports
+          path: test-reports/
