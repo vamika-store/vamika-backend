@@ -9,7 +9,7 @@ on:
       - main
 jobs:
   build:
-    name: Build and Push Docker Image
+    name: Build and test
     runs-on: ubuntu-latest
            
     steps:
@@ -22,12 +22,9 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      # - name: Run Unit Tests
-      #   run: ./mvnw test
-
-      # - name: Run Integration Tests
-      #   run: ./mvnw verify
-
+      - name: Run Tests (unit + Integration)
+        run: mvn test
+        
       # - name: Generate Test Report
       #   run: |
       #     mkdir -p test-reports
