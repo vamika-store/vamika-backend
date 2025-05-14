@@ -22,16 +22,14 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Run Tests (unit + Integration)
-        run: mvn test
-        
-      - name: Generate Test Report
-        run: |
-          mkdir -p test-reports
-          cp target/surefire-reports/*.xml test-reports/
+      - name: Run Unit Tests
+        run: mvn -B test
 
-      - name: Upload Test Report
-        uses: actions/upload-artifact@v3
-        with:
-          name: test-reports
-          path: test-reports/
+      - name: Run Integration Tests & Verify
+        run: mvn -B verify
+
+      - name: Generate JaCoCo Coverage Report
+        run: mvn jacoco:report
+
+      - name: Build Spring Boot App
+        run: mvn -B package -DskipTests
