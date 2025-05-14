@@ -33,15 +33,10 @@ runs:
         content_type: html
         body: |
           <h3>CI/CD Build Report</h3>
-          <p><strong>Status:</strong> ${{ inputs.status }}</p>
-          <p><strong>Environment:</strong> ${{ inputs.environment }}</p>
-          <p><strong>Commit:</strong> <code>${{ github.sha }}</code></p>
-          <p><strong>Actor:</strong> ${{ github.actor }}</p>
-          <p><strong>Workflow:</strong> ${{ github.workflow }}</p>
-          <p><strong>Run:</strong> <a href="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}">View on GitHub</a></p>
+          <p><b>Status:</b> ${{ inputs.status }}</p>
+          <p><b>Commit:</b> ${{ github.sha }}</p>
+          <p><b>Actor:</b> ${{ github.actor }}</p>
+          <p><b>Workflow:</b> ${{ github.workflow }}</p>
+          <p><b>Run:</b> <a href="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}">View on GitHub</a></p>
           <hr />
-          <h4>Test Summary</h4>
-          <table border="1" cellspacing="0" cellpadding="6" style="border-collapse:collapse;font-family:monospace;">
-            <tr><th>Class</th><th>Tests</th><th>Failures</th><th>Errors</th><th>Skipped</th><th>Time</th></tr>
-            ${{ inputs.log_summary }}
-          </table>
+          <pre>${{ inputs.summary }}</pre>
