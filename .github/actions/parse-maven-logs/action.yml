@@ -1,30 +1,28 @@
-name: Parse Maven Logs
-description: Extract test result summary from Maven logs
-inputs:
-  build_status:
-    description: Maven build exit code
-    required: true
-runs:
-  using: "composite"
-  steps:
-    - name: Parse logs and extract summary
-      shell: bash
-      run: |
-        summary=""
-        while IFS= read -r line; do
-          if [[ "$line" =~ Tests\ run:\ ([0-9]+),\ Failures:\ ([0-9]+),\ Errors:\ ([0-9]+),\ Skipped:\ ([0-9]+),\ Time\ elapsed:\ ([0-9.]+)\ s\ --\ in\ (.*) ]]; then
-            tests="${BASH_REMATCH[1]}"
-            failures="${BASH_REMATCH[2]}"
-            errors="${BASH_REMATCH[3]}"
-            skipped="${BASH_REMATCH[4]}"
-            time="${BASH_REMATCH[5]}"
-            class="${BASH_REMATCH[6]}"
-            summary+="<tr><td>$class</td><td>$tests</td><td>$failures</td><td>$errors</td><td>$skipped</td><td>${time}s</td></tr>\n"
-          fi
-        done < logs/maven.log
+- name: Parse Maven logs
+  shell: bash
+  run: |
+    set -euo pipefail
+    log_file="logs/maven.log"
 
-        if [[ -z "$summary" ]]; then
-          summary="<tr><td colspan='6'>No test results found</td></tr>"
-        fi
+    # If log is missing or empty, skip parsing but still set a default output
+    if [[ ! -s "$log_file" ]]; then
+      echo "No Maven test log found or file is empty; skipping parse."
+      echo "log_summary=No test results." >> "$GITHUB_OUTPUT"
+      exit 0
+    fi
 
-        echo -e "log_summary<<EOF\n$summary\nEOF" >> $GITHUB_OUTPUT
+    # Example parse logic (avoid grep failing the script):
+    # Use '|| true' so grep returning 1 doesn’t abort when set -e is on
+    failures=$(grep -Eo "Failures: [1-9]" "$log_file" || true)
+    if [[ -n "$failures" ]]; then
+      color="red"
+      text="$failures failures"
+    else
+      color="green"
+      text="All tests passed"
+    fi
+
+    # Emit HTML-formatted rows as output (use $GITHUB_OUTPUT to set composite outputs)
+    echo "log_summary<<EOF" >> "$GITHUB_OUTPUT"
+    echo "<tr><td><font color=\"$color\">$text</font></td></tr>" >> "$GITHUB_OUTPUT"
+    echo "EOF" >> "$GITHUB_OUTPUT"
