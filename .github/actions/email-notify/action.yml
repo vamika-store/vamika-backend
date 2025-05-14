@@ -32,11 +32,11 @@ runs:
         subject: "[${{ inputs.environment }}] Build ${{ inputs.status == 'success' && '✅ SUCCESS' || '❌ FAILURE' }} - ${{ github.repository }}"
         content_type: html
         body: |
-          <h3>CI/CD Build Report</h3>
-          <p><b>Status:</b> ${{ inputs.status }}</p>
-          <p><b>Commit:</b> ${{ github.sha }}</p>
-          <p><b>Actor:</b> ${{ github.actor }}</p>
-          <p><b>Workflow:</b> ${{ github.workflow }}</p>
-          <p><b>Run:</b> <a href="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}">View on GitHub</a></p>
-          <hr />
-          <pre>${{ inputs.summary }}</pre>
+              <h3>CI/CD Build Report</h3>
+              <p><b>Status:</b> ${{ inputs.status }}</p>
+              <p><b>Commit:</b> ${{ github.sha }}</p>
+              <p><b>Actor:</b> ${{ github.actor }}</p>
+              <p><b>Workflow:</b> ${{ github.workflow }}</p>
+              <p><b>Run:</b> <a href="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}">View on GitHub</a></p>
+              <hr />
+              ${{ inputs.summary }}
