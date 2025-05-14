@@ -19,11 +19,11 @@ runs:
       shell: bash
       run: |
         if [ "${{ inputs.build_status }}" -eq 0 ]; then
-          grep -A5 "Results :" maven.log > parsed.log || echo "No test summary found."
+          grep -A5 "Results :" logs/maven.log > logs/parsed.log || echo "No test summary found."
         else
-          grep -E 'COMPILATION ERROR|BUILD FAILURE|Tests run:|^\[ERROR\]' maven.log > parsed.log || echo "No known failure patterns found."
+          grep -E 'COMPILATION ERROR|BUILD FAILURE|Tests run:|^\[ERROR\]' logs/maven.log > logs/parsed.log || echo "No known failure patterns found."
         fi
 
         echo "log_summary<<EOF" >> $GITHUB_OUTPUT
-        cat parsed.log >> $GITHUB_OUTPUT
+        cat logs/parsed.log >> $GITHUB_OUTPUT
         echo "EOF" >> $GITHUB_OUTPUT
