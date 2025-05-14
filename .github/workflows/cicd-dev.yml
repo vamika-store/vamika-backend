@@ -1,4 +1,4 @@
-name: Automation testing-QA
+name: Automation testing-dev
 
 on:
   push:
