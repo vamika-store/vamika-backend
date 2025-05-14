@@ -15,13 +15,13 @@ runs:
   using: "composite"
   steps:
     - name: Parse logs and extract summary
-      id: parse
+      id: extract
       shell: bash
       run: |
         if [ "${{ inputs.build_status }}" -eq 0 ]; then
-          grep -A5 "Results :" logs/maven.log > logs/parsed.log || echo "No test summary found."
+          grep -A5 "Results :" logs/maven.log > logs/parsed.log || echo "No test summary found." > logs/parsed.log
         else
-          grep -E 'COMPILATION ERROR|BUILD FAILURE|Tests run:|^\[ERROR\]' logs/maven.log > logs/parsed.log || echo "No known failure patterns found."
+          grep -E 'COMPILATION ERROR|BUILD FAILURE|Tests run:|^\[ERROR\]' logs/maven.log > logs/parsed.log || echo "No known failure patterns found." > logs/parsed.log
         fi
 
         echo "log_summary<<EOF" >> $GITHUB_OUTPUT
