@@ -1,28 +1,26 @@
 name: Parse Maven Logs
-description: Extracts test result summary
+description: Extract test result summary from Maven logs
+
 inputs:
   build_status:
-    required: true
     description: Maven build exit code
+    required: true
+
 outputs:
   log_summary:
-    description: Test summary table rows in HTML
+    description: Test results in HTML table rows
+    value: ${{ steps.extract.outputs.summary }}
+
 runs:
-  using: composite
+  using: "composite"
   steps:
     - name: Parse logs and extract summary
+      id: extract
       shell: bash
       run: |
         summary=""
-        logfile="logs/maven.log"
-
-        if [[ ! -f "$logfile" ]]; then
-          echo "log_summary=<tr><td colspan='6'>Log file not found</td></tr>" >> $GITHUB_OUTPUT
-          exit 0
-        fi
-
         while IFS= read -r line; do
-          if [[ "$line" =~ Tests\ run:\ ([0-9]+),\ Failures:\ ([0-9]+),\ Errors:\ ([0-9]+),\ Skipped:\ ([0-9]+),\ Time\ elapsed:\ ([0-9.]+).*--\ in\ (.*) ]]; then
+          if [[ "$line" =~ Tests\ run:\ ([0-9]+),\ Failures:\ ([0-9]+),\ Errors:\ ([0-9]+),\ Skipped:\ ([0-9]+),\ Time\ elapsed:\ ([0-9.]+)\ s\ --\ in\ (.*) ]]; then
             tests="${BASH_REMATCH[1]}"
             failures="${BASH_REMATCH[2]}"
             errors="${BASH_REMATCH[3]}"
@@ -31,10 +29,12 @@ runs:
             class="${BASH_REMATCH[6]}"
             summary+="<tr><td>$class</td><td>$tests</td><td>$failures</td><td>$errors</td><td>$skipped</td><td>${time}s</td></tr>\n"
           fi
-        done < "$logfile"
+        done < logs/maven.log
 
         if [[ -z "$summary" ]]; then
           summary="<tr><td colspan='6'>No test results found</td></tr>"
         fi
 
-        echo -e "log_summary<<EOF\n$summary\nEOF" >> $GITHUB_OUTPUT
+        echo "summary<<EOF" >> $GITHUB_OUTPUT
+        echo -e "$summary" >> $GITHUB_OUTPUT
+        echo "EOF" >> $GITHUB_OUTPUT
