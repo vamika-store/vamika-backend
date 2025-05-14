@@ -14,16 +14,28 @@ outputs:
 runs:
   using: "composite"
   steps:
-    - name: Parse logs and extract summary
-      id: extract
+    - name: Parse Maven Log
+      id: format
       shell: bash
       run: |
-        if [ "${{ inputs.build_status }}" -eq 0 ]; then
-          grep -A5 "Results :" logs/maven.log > logs/parsed.log || echo "No test summary found." > logs/parsed.log
+        echo "<html><body>" > email.html
+
+        if [[ "${{ inputs.build_status }}" == "0" ]]; then
+          echo "<h2 style='color:green;'>Build Success</h2>" >> email.html
         else
-          grep -E 'COMPILATION ERROR|BUILD FAILURE|Tests run:|^\[ERROR\]' logs/maven.log > logs/parsed.log || echo "No known failure patterns found." > logs/parsed.log
+          echo "<h2 style='color:red;'>Build Failed</h2>" >> email.html
         fi
 
-        echo "log_summary<<EOF" >> $GITHUB_OUTPUT
-        cat logs/parsed.log >> $GITHUB_OUTPUT
+        echo "<h3>Test Summary:</h3><ul>" >> email.html
+        grep -E "Tests run:" maven.log | sed 's/^/<li>/' | sed 's/$/<\/li>/' >> email.html
+        echo "</ul>" >> email.html
+
+        echo "<h3>Failures & Errors:</h3><ul>" >> email.html
+        grep -A 3 -E "<<< FAILURE!|<<< ERROR!" maven.log | sed 's/^/<li>/' | sed 's/$/<\/li>/' >> email.html
+        echo "</ul>" >> email.html
+
+        echo "</body></html>" >> email.html
+
+        echo "html<<EOF" >> $GITHUB_OUTPUT
+        cat email.html >> $GITHUB_OUTPUT
         echo "EOF" >> $GITHUB_OUTPUT
