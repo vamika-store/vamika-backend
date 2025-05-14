@@ -32,15 +32,16 @@ jobs:
       - name: surefire-reports
         run: |
           ls -lR target/surefire-reports
+          chmod +x target/surefire-reports/*.xml
       - name: jacoco-reports
         run: |
           ls -lR target/site/jacoco/
 
-      # - name: Upload JUnit Test Reports
-      #   uses: actions/upload-artifact@v2
-      #   with:
-      #     name: backend-junit-reports
-      #     path: target/surefire-reports/
+      - name: Upload JUnit Test Reports
+        uses: actions/upload-artifact@v3
+        with:
+          name: backend-junit-reports
+          path: target/surefire-reports/
 
       # - name: Upload JaCoCo Coverage Report
       #   uses: actions/upload-artifact@v2
