@@ -38,7 +38,7 @@ jobs:
           ls -lR target/site/jacoco/
       
       - name: Upload Test Reports
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@main
         with:
           name: test-reports
           path: |
