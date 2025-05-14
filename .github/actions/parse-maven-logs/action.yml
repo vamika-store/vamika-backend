@@ -15,7 +15,7 @@ runs:
   using: "composite"
   steps:
     - name: Parse logs and extract summary
-      id: extract
+      id: parse
       shell: bash
       run: |
         if [ "${{ inputs.build_status }}" -eq 0 ]; then
