@@ -1,0 +1,37 @@
+name: CI Pipeline with Modular Actions
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Run Maven Build
+        id: build
+        uses: ./.github/actions/maven-build-test
+
+      - name: Parse Logs
+        id: parse
+        uses: ./.github/actions/parse-maven-logs
+        with:
+          build_status: ${{ steps.build.outputs.status }}
+
+      - name: Notify via Email
+        uses: ./.github/actions/email-notify
+        with:
+          status: ${{ steps.build.outputs.status == '0' && 'success' || 'failure' }}
+          environment: dev
+          summary: ${{ steps.parse.outputs.log_summary }}
