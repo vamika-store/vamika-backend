@@ -26,17 +26,13 @@ runs:
 
     - name: Send Email
       uses: dawidd6/action-send-mail@v3
-      env:
-        USERNAME: ${{ env.EMAIL_USERNAME }}
-        PASSWORD: ${{ env.EMAIL_PASSWORD }}
-        TO: ${{ env.EMAIL_TO }}
       with:
         server_address: smtp.gmail.com
         server_port: 587
-        username: ${{ env.USERNAME }}
-        password: ${{ env.PASSWORD }}
-        to: ${{ env.TO }}
-        from: ${{ env.USERNAME }}
+        username: ${{ env.EMAIL_USERNAME }}
+        password: ${{ env.EMAIL_PASSWORD }}
+        to: ${{ env.EMAIL_TO }}
+        from: ${{ env.EMAIL_USERNAME }} # Ensure the 'from' field is set
         subject: ${{ inputs.status == 'success' && format('✅ Build Successful - {0}', github.repository) || format('❌ Build Failed - {0}', github.repository) }}
         body: |
           Build ${{ inputs.status }} for ${{ github.repository }}.
