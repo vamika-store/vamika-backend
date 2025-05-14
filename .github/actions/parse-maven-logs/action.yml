@@ -18,23 +18,12 @@ runs:
       id: extract
       shell: bash
       run: |
-        # Extract lines with test summary
-        grep -oP '\[INFO\] Tests run:.*in .*' logs/maven.log > logs/parsed.log || echo "No test summary found." > logs/parsed.log
+        if [ "${{ inputs.build_status }}" -eq 0 ]; then
+          grep -A5 "Results :" logs/maven.log > logs/parsed.log || echo "No test summary found." > logs/parsed.log
+        else
+          grep -E 'COMPILATION ERROR|BUILD FAILURE|Tests run:|^\[ERROR\]' logs/maven.log > logs/parsed.log || echo "No known failure patterns found." > logs/parsed.log
+        fi
 
-        # Start HTML table
         echo "log_summary<<EOF" >> $GITHUB_OUTPUT
-        echo '<table border="1" cellspacing="0" cellpadding="6">' >> $GITHUB_OUTPUT
-        echo '<thead><tr><th>Test Class</th><th>Tests Run</th><th>Failures</th><th>Errors</th><th>Skipped</th><th>Time</th></tr></thead><tbody>' >> $GITHUB_OUTPUT
-
-        while read -r line; do
-          tests=$(echo "$line" | grep -oP 'Tests run: \K\d+')
-          failures=$(echo "$line" | grep -oP 'Failures: \K\d+')
-          errors=$(echo "$line" | grep -oP 'Errors: \K\d+')
-          skipped=$(echo "$line" | grep -oP 'Skipped: \K\d+')
-          time=$(echo "$line" | grep -oP 'Time elapsed: \K[0-9.]+ s')
-          class=$(echo "$line" | grep -oP 'in \K.*$')
-          echo "<tr><td>$class</td><td>$tests</td><td>$failures</td><td>$errors</td><td>$skipped</td><td>$time</td></tr>" >> $GITHUB_OUTPUT
-        done < logs/parsed.log
-
-        echo '</tbody></table>' >> $GITHUB_OUTPUT
+        cat logs/parsed.log >> $GITHUB_OUTPUT
         echo "EOF" >> $GITHUB_OUTPUT
