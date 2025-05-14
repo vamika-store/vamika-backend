@@ -21,19 +21,19 @@ runs:
       shell: bash
       run: |
         echo '${{ inputs.email_config }}' > email_config.json
-        echo "username=$(jq -r .username email_config.json)" >> $GITHUB_OUTPUT
-        echo "password=$(jq -r .password email_config.json)" >> $GITHUB_OUTPUT
-        echo "to=$(jq -r .to email_config.json)" >> $GITHUB_OUTPUT
+        echo "EMAIL_USERNAME=$(jq -r .username email_config.json)" >> $GITHUB_ENV
+        echo "EMAIL_PASSWORD=$(jq -r .password email_config.json)" >> $GITHUB_ENV
+        echo "EMAIL_TO=$(jq -r .to email_config.json)" >> $GITHUB_ENV
 
     - name: Send Email
       uses: dawidd6/action-send-mail@v3
       with:
         server_address: smtp.gmail.com
         server_port: 587
-        username: ${{ steps.Parse.outputs.username }}
-        password: ${{ steps.Parse.outputs.password }}
-        to: ${{ steps.Parse.outputs.to }}
-        from: ${{ steps.Parse.outputs.username }}
+        username: ${{ env.EMAIL_USERNAME }}
+        password: ${{ env.EMAIL_PASSWORD }}
+        to: ${{ env.EMAIL_TO }}
+        from: ${{ env.EMAIL_USERNAME }}
         subject: ${{ inputs.status == 'success' && format('✅ Build Successful - {0}', github.repository) || format('❌ Build Failed - {0}', github.repository) }}
         body: |
           Build ${{ inputs.status }} for ${{ github.repository }}.
