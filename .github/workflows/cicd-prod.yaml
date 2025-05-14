@@ -1,4 +1,4 @@
-name: Automation testing-QA
+name: Automation Deployment -Prod
 
 on:
   push:
@@ -22,16 +22,41 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Run Tests (unit + Integration)
-        run: mvn test jacoco:report
-        
-      - name: Generate Test Report
-        run: |
-          mkdir -p test-reports
-          cp target/surefire-reports/*.xml test-reports/
+      - name: Run Unit Tests with Coverage
+        run: mvn clean test jacoco:report
 
-      - name: Upload Test Report
-        uses: actions/upload-artifact@v3
+      - name: Build Spring Boot App
+        run: mvn -B package -DskipTests
+
+      - name: surefire-reports
+        run: |
+          ls -lR target/surefire-reports
+      
+      - name: jacoco-reports
+        run: |
+          ls -lR target/site/jacoco/
+      
+      - name: Upload Test Reports
+        uses: actions/upload-artifact@main
         with:
           name: test-reports
-          path: test-reports/
+          path: |
+            target/surefire-reports/*.xml
+            target/site/jacoco/*.html
+          if-no-files-found: warn
+      
+      - name: Notify on success
+        if: success()
+        uses: ./.github/actions/notify-email
+        with:
+          status: success
+          environment: prod
+          email_config: ${{ vars.EMAIL_CONFIG }}
+
+      - name: Notify on failure
+        if: failure()
+        uses: ./.github/actions/notify-email
+        with:
+          status: failure
+          environment: prod
+          email_config: ${{ vars.EMAIL_CONFIG }}
