@@ -48,20 +48,19 @@ jobs:
       
       - name: Notify on success
         if: success()
-        #run: echo "Build and tests passed successfully!"
         uses: ./.github/actions/notify-email
         with:
           status: success
           environment: dev
-
+          email_config: ${{ secrets.EMAIL_CONFIG }}
 
       - name: Notify on failure
         if: failure()
-        #run: echo "Build or tests failed. Please check the logs.
         uses: ./.github/actions/notify-email
         with:
           status: failure
           environment: dev
+          email_config: ${{ secrets.EMAIL_CONFIG }}
     
 
 

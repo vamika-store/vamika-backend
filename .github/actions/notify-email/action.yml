@@ -1,6 +1,6 @@
 name: Notify Email
 
-description: Send email via gmail using EMAIL_CONFIG secret
+description: Send email via Gmail using EMAIL_CONFIG secret
 
 inputs:
   status:
@@ -9,13 +9,17 @@ inputs:
   environment:
     description: Environment name (e.g., dev, prod)
     required: true
+  email_config:
+    description: JSON string containing email configuration
+    required: true
+
 runs:
   using: composite
   steps:
-    - name: Parse EMAIL_CONFIG secret
+    - name: Parse EMAIL_CONFIG input
       shell: bash
       run: |
-        echo '${{ secrets.EMAIL_CONFIG }}' > email_config.json
+        echo '${{ inputs.email_config }}' > email_config.json
         echo "EMAIL_USERNAME=$(jq -r .username email_config.json)" >> $GITHUB_ENV
         echo "EMAIL_PASSWORD=$(jq -r .password email_config.json)" >> $GITHUB_ENV
         echo "EMAIL_TO=$(jq -r .to email_config.json)" >> $GITHUB_ENV
