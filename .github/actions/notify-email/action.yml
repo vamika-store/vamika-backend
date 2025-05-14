@@ -33,7 +33,7 @@ runs:
         password: ${{ env.EMAIL_PASSWORD }}
         to: ${{ env.EMAIL_TO }}
         from: ${{ env.EMAIL_USERNAME }} 
-        subject: "${{ inputs.status == 'success' && format('✅ Build Successful [inputs.environment] - {0}', github.repository) || format('❌ Build Failed [inputs.environment]- {0}', github.repository) }}"
+        subject: "[${{ inputs.environment }}] Build ${{ inputs.status == 'success' && format('✅ Successful - {0}', github.repository) || format('❌ Failed - {0}', github.repository) }}"
         content_type: html
         body: |
                 Build ${{ inputs.status }} for ${{ github.repository }}
