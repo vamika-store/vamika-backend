@@ -1,0 +1,34 @@
+name: Send Email Notification
+description: Sends email summary based on result
+
+inputs:
+  status:
+    required: true
+  environment:
+    required: true
+  summary:
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Send Email
+      uses: dawidd6/action-send-mail@v3
+      with:
+        server_address: smtp.office365.com
+        server_port: 587
+        username: ${{ secrets.OUTLOOK_USERNAME }}
+        password: ${{ secrets.OUTLOOK_PASSWORD }}
+        to: ${{ secrets.EMAIL_TO }}
+        from: ${{ secrets.OUTLOOK_USERNAME }}
+        subject: "[${{ inputs.environment }}] Build ${{ inputs.status == 'success' && '✅ SUCCESS' || '❌ FAILURE' }} - ${{ github.repository }}"
+        content_type: html
+        body: |
+          <h3>CI/CD Build Report</h3>
+          <p><b>Status:</b> ${{ inputs.status }}</p>
+          <p><b>Commit:</b> ${{ github.sha }}</p>
+          <p><b>Actor:</b> ${{ github.actor }}</p>
+          <p><b>Workflow:</b> ${{ github.workflow }}</p>
+          <p><b>Run:</b> <a href="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}">View on GitHub</a></p>
+          <hr />
+          <pre>${{ inputs.summary }}</pre>
