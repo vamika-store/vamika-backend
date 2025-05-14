@@ -30,8 +30,8 @@ jobs:
           mkdir -p test-reports
           cp target/surefire-reports/*.xml test-reports/
 
-      - name: Upload Test Report
-        uses: actions/upload-artifact@v3
-        with:
-          name: test-reports
-          path: test-reports/
+      # - name: Upload Test Report
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: test-reports
+      #     path: test-reports/
