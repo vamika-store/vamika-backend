@@ -11,7 +11,7 @@ on:
 jobs:
   build:
     name: Build and test
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
@@ -35,25 +35,34 @@ jobs:
       - name: surefire-reports
         run: |
           ls -lR target/surefire-reports
-          chmod +x target/surefire-reports/*.xml
+          chmod 777 target/surefire-reports/*.xml
       - name: jacoco-reports
         run: |
           ls -lR target/site/jacoco/
 
-      - name: Manually Download Upload Artifact Action
-        run: |
-          git clone https://github.com/actions/upload-artifact.git
-          cd upload-artifact
-          git checkout v3.1.2
+      # - name: Manually Download Upload Artifact Action
+      #   run: |
+      #     git clone https://github.com/actions/upload-artifact.git
+      #     cd upload-artifact
+      #     git checkout v3.1.2
 
-      - name: Upload JUnit Test Reports
-        uses: ./upload-artifact
-        with:
-          name: backend_junit_reports
-          path: target/surefire-reports/
-
-      # - name: Upload JaCoCo Coverage Report
-      #   uses: actions/upload-artifact@v2
+      # - name: Upload JUnit Test Reports
+      #   uses: ./upload-artifact
       #   with:
-      #     name: backend-jacoco-report
-      #     path: target/site/jacoco/
+      #     name: backend_junit_reports
+      #     path: target/surefire-reports/
+
+      - name: Send Test Reports via Email
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: ${{ fromJson(secrets.EMAIL_CONFIG).server }}
+          server_port: ${{ fromJson(secrets.EMAIL_CONFIG).port }}
+          username: ${{ fromJson(secrets.EMAIL_CONFIG).username }}
+          password: ${{ fromJson(secrets.EMAIL_CONFIG).password }}
+          subject: "Test Reports - Build #${{ github.run_number }}"
+          to: "chvamshikrishna24@gmail.com"
+          from: ${{ fromJson(secrets.EMAIL_CONFIG).username }}
+          body: "Please find the attached test reports."
+          attachments: |
+            target/surefire-reports/*.xml
+            target/site/jacoco/*.html
