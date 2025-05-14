@@ -18,7 +18,6 @@ runs:
       id: extract
       shell: bash
       run: |
-        summary=""
         if [ "${{ inputs.build_status }}" -eq 0 ]; then
           grep -A5 "Results :" maven.log > parsed.log || echo "No test summary found."
         else
