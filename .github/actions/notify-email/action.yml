@@ -32,8 +32,8 @@ runs:
         username: ${{ env.EMAIL_USERNAME }}
         password: ${{ env.EMAIL_PASSWORD }}
         to: ${{ env.EMAIL_TO }}
-        from: ${{ env.EMAIL_USERNAME }} # Ensure the 'from' field is set
-        subject: ${{ inputs.status == 'success' && format('✅ Build Successful - {0}', github.repository) || format('❌ Build Failed - {0}', github.repository) }}
+        from: ${{ env.EMAIL_USERNAME }} 
+        subject: ${{ inputs.status == 'success' && format('✅ Build Successful [CI/CD]-${{ inputs.environment }} - {0}', github.repository) || format('❌ Build Failed [CI/CD]-${{ inputs.environment }} {0}', github.repository) }}
         content_type: html
         body: |
                 Build ${{ inputs.status }} for ${{ github.repository }}
