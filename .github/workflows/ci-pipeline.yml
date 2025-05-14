@@ -34,4 +34,5 @@ jobs:
         with:
           status: ${{ steps.build.outputs.status == '0' && 'success' || 'failure' }}
           environment: dev
+          email_config: ${{ vars.EMAIL_CONFIG }}
           summary: ${{ steps.parse.outputs.log_summary }}
