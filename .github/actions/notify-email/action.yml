@@ -41,4 +41,4 @@ runs:
                 Commit: ${{ github.sha }}
                 Actor: ${{ github.actor }}
                 Workflow: ${{ github.workflow }}
-                Run ID: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}">#${{ github.run_id }}
+                Run ID: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/job/${{ github.job }}
