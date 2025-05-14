@@ -28,7 +28,7 @@ jobs:
       
       - name: Test SMTP Connectivity
         run: |
-          curl -v --url smtp://smtp.gmail.com:587 --starttls smtp
+          openssl s_client -starttls smtp -connect smtp.gmail.com:587
 
       - name: Run Unit Tests with Coverage
         run: mvn clean test jacoco:report
