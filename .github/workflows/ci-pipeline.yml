@@ -3,7 +3,7 @@ name: CI Pipeline with Modular Actions
 on:
   push:
     branches:
-      - main
+      - dev
 
 jobs:
   build:
