@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -17,7 +18,6 @@ public class ProductMapper {
 
     @Autowired
     private CategoryService categoryService;
-
 
     public Product mapToProductEntity(ProductDto productDto){
         Product product = new Product();
@@ -101,7 +101,7 @@ public class ProductMapper {
     }
 
     private String getProductThumbnail(List<Resources> resources) {
-        return resources.stream().filter(Resources::getIsPrimary).findFirst().orElse(null).getUrl();
+        return Objects.requireNonNull(resources.stream().filter(Resources::getIsPrimary).findFirst().orElse(null)).getUrl();
     }
 
     public List<ProductVariantDto> mapProductVariantListToDto(List<ProductVariant> productVariants) {
