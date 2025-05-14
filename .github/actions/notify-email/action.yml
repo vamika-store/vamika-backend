@@ -34,6 +34,7 @@ runs:
         to: ${{ env.EMAIL_TO }}
         from: ${{ env.EMAIL_USERNAME }} # Ensure the 'from' field is set
         subject: ${{ inputs.status == 'success' && format('✅ Build Successful - {0}', github.repository) || format('❌ Build Failed - {0}', github.repository) }}
+        content_type: html
         body: |
             <h2 style="color:green;">✅ Build ${{ inputs.status }} for <i>${{ github.repository }}</i></h2>
             <p><strong>Environment:</strong> ${{ inputs.environment }}</p>
