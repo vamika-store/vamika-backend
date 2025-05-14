@@ -19,22 +19,12 @@ runs:
       shell: bash
       run: |
         summary=""
-        while IFS= read -r line; do
-          if [[ "$line" =~ Tests\ run:\ ([0-9]+),\ Failures:\ ([0-9]+),\ Errors:\ ([0-9]+),\ Skipped:\ ([0-9]+),\ Time\ elapsed:\ ([0-9.]+)\ s\ --\ in\ (.*) ]]; then
-            tests="${BASH_REMATCH[1]}"
-            failures="${BASH_REMATCH[2]}"
-            errors="${BASH_REMATCH[3]}"
-            skipped="${BASH_REMATCH[4]}"
-            time="${BASH_REMATCH[5]}"
-            class="${BASH_REMATCH[6]}"
-            summary+="<tr><td>$class</td><td>$tests</td><td>$failures</td><td>$errors</td><td>$skipped</td><td>${time}s</td></tr>\n"
-          fi
-        done < logs/maven.log
-
-        if [[ -z "$summary" ]]; then
-          summary="<tr><td colspan='6'>No test results found</td></tr>"
+        if [ "${{ inputs.build_status }}" -eq 0 ]; then
+          grep -A5 "Results :" maven.log > parsed.log || echo "No test summary found."
+        else
+          grep -E 'COMPILATION ERROR|BUILD FAILURE|Tests run:|^\[ERROR\]' maven.log > parsed.log || echo "No known failure patterns found."
         fi
 
-        echo "summary<<EOF" >> $GITHUB_OUTPUT
-        echo -e "$summary" >> $GITHUB_OUTPUT
+        echo "log_summary<<EOF" >> $GITHUB_OUTPUT
+        cat parsed.log >> $GITHUB_OUTPUT
         echo "EOF" >> $GITHUB_OUTPUT
