@@ -48,7 +48,7 @@ jobs:
       
       - name: Notify on success
         if: success()
-        run: echo "Build and tests passed successfully!"
+        #run: echo "Build and tests passed successfully!"
         uses: ./.github/actions/notify-email
         with:
           status: success
@@ -57,7 +57,7 @@ jobs:
 
       - name: Notify on failure
         if: failure()
-        run: echo "Build or tests failed. Please check the logs.
+        #run: echo "Build or tests failed. Please check the logs.
         uses: ./.github/actions/notify-email
         with:
           status: failure
