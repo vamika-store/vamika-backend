@@ -36,11 +36,10 @@ runs:
         subject: ${{ inputs.status == 'success' && format('✅ Build Successful - {0}', github.repository) || format('❌ Build Failed - {0}', github.repository) }}
         content_type: html
         body: |
-            <h2 style="color:green;">✅ Build ${{ inputs.status }} for <i>${{ github.repository }}</i></h2>
-            <p><strong>Environment:</strong> ${{ inputs.environment }}</p>
-            <p><strong>Commit:</strong> <code>${{ github.sha }}</code></p>
-            <p><strong>Actor:</strong> ${{ github.actor }}</p>
-            <p><strong>Workflow:</strong> ${{ github.workflow }}</p>
-            <p><strong>Run ID:</strong> <a href="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}">#${{ github.run_id }}</a></p>
-            <hr>
-            <p style="font-size:small;color:gray;">GitHub Actions Notification | Powered by CI/CD</p>
+                Build ${{ inputs.status }} for ${{ github.repository }}
+                Environment: ${{ inputs.environment }}
+                Commit: ${{ github.sha }}
+                Actor: ${{ github.actor }}
+                Workflow: ${{ github.workflow }}
+                Run ID: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}">#${{ github.run_id }}
+                
