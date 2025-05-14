@@ -11,11 +11,14 @@ on:
 jobs:
   build:
     name: Build and test
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Test Network Connectivity
+        run: curl -I https://github.com
 
       - name: Set up JDK
         uses: actions/setup-java@v3
@@ -38,7 +41,7 @@ jobs:
           ls -lR target/site/jacoco/
 
       - name: Upload JUnit Test Reports
-        uses: actions/upload-artifact@v3.1.2
+        uses: actions/upload-artifact@v3
         with:
           name: backend-junit-reports
           path: target/surefire-reports/
