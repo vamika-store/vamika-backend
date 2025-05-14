@@ -29,7 +29,8 @@ jobs:
         with:
           build_status: ${{ steps.build.outputs.status }}
 
-      - name: Notify via Email
+      - name: Email Notification
+        if: always()
         uses: ./.github/actions/email-notify
         with:
           status: ${{ steps.build.outputs.status == '0' && 'success' || 'failure' }}
