@@ -52,7 +52,7 @@ jobs:
         with:
           status: success
           environment: dev
-          email_config: ${{ secrets.EMAIL_CONFIG }}
+          email_config: ${{ vars.EMAIL_CONFIG }}
 
       - name: Notify on failure
         if: failure()
@@ -60,7 +60,7 @@ jobs:
         with:
           status: failure
           environment: dev
-          email_config: ${{ secrets.EMAIL_CONFIG }}
+          email_config: ${{ vars.EMAIL_CONFIG }}
     
 
 
