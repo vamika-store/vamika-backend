@@ -17,6 +17,7 @@ runs:
   using: composite
   steps:
     - name: Parse EMAIL_CONFIG input
+      id: Parse
       shell: bash
       run: |
         echo '${{ inputs.email_config }}' > email_config.json
