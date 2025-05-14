@@ -5,10 +5,9 @@ runs:
   using: "composite"
   steps:
     - name: Build with Maven
-      id: build
+      id: maven
       shell: bash
       run: |
-        mkdir -p logs
         set -o pipefail
-        mvn clean test | tee logs/maven.log
-        echo "status=$?" >> $GITHUB_OUTPUT
+        mvn clean test | tee maven.log
+        echo "exit_code=${PIPESTATUS[0]}" >> $GITHUB_OUTPUT
