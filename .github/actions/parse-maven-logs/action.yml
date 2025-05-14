@@ -9,7 +9,7 @@ inputs:
 outputs:
   log_summary:
     description: Test results in HTML table rows
-    value: ${{ steps.extract.outputs.summary }}
+    value: ${{ steps.extract.outputs.log_summary }}
 
 runs:
   using: "composite"
