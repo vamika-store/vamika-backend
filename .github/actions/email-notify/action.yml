@@ -10,17 +10,25 @@ inputs:
     required: true
 
 runs:
-  using: "composite"
+  using: composite
   steps:
+    - name: Parse EMAIL_CONFIG input
+      shell: bash
+      run: |
+        echo '${{ inputs.email_config }}' > email_config.json
+        echo "EMAIL_USERNAME=$(jq -r .username email_config.json)" >> $GITHUB_ENV
+        echo "EMAIL_PASSWORD=$(jq -r .password email_config.json)" >> $GITHUB_ENV
+        echo "EMAIL_TO=$(jq -r .to email_config.json)" >> $GITHUB_ENV
+
     - name: Send Email
       uses: dawidd6/action-send-mail@v3
       with:
-        server_address: smtp.office365.com
+        server_address: smtp.gmail.com
         server_port: 587
-        username: ${{ secrets.OUTLOOK_USERNAME }}
-        password: ${{ secrets.OUTLOOK_PASSWORD }}
-        to: ${{ secrets.EMAIL_TO }}
-        from: ${{ secrets.OUTLOOK_USERNAME }}
+        username: ${{ env.EMAIL_USERNAME }}
+        password: ${{ env.EMAIL_PASSWORD }}
+        to: ${{ env.EMAIL_TO }}
+        from: ${{ env.EMAIL_USERNAME }}
         subject: "[${{ inputs.environment }}] Build ${{ inputs.status == 'success' && '✅ SUCCESS' || '❌ FAILURE' }} - ${{ github.repository }}"
         content_type: html
         body: |
