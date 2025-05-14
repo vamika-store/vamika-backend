@@ -13,7 +13,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name:upload-artifact versioncheck
+      - name: upload-artifact versioncheck
         run: |
           curl -I https://github.com/actions/upload-artifact
 
