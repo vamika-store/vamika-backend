@@ -1,0 +1,29 @@
+name: Parse Maven Logs
+description: Extracts failure or success info from maven.log
+
+inputs:
+  build_status:
+    required: true
+    description: Status code from Maven build (0 = success)
+
+outputs:
+  log_summary:
+    description: Parsed log output
+    value: ${{ steps.parse.outputs.log_summary }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Parse Logs
+      id: parse
+      shell: bash
+      run: |
+        if [ "${{ inputs.build_status }}" -eq 0 ]; then
+          grep -A5 "Results :" maven.log > parsed.log || echo "No test summary found."
+        else
+          grep -E 'COMPILATION ERROR|BUILD FAILURE|Tests run:|^\[ERROR\]' maven.log > parsed.log || echo "No known failure patterns found."
+        fi
+
+        echo "log_summary<<EOF" >> $GITHUB_OUTPUT
+        cat parsed.log >> $GITHUB_OUTPUT
+        echo "EOF" >> $GITHUB_OUTPUT
