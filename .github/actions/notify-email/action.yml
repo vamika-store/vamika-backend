@@ -12,6 +12,9 @@ inputs:
   email_config:
     description: JSON string containing email configuration
     required: true
+  log_summary:
+    description: Build or error log summary
+    required: false
 
 runs:
   using: composite
@@ -36,9 +39,11 @@ runs:
         subject: "[${{ inputs.environment }}] Build ${{ inputs.status == 'success' && format('✅ Successful - {0}', github.repository) || format('❌ Failed - {0}', github.repository) }}"
         content_type: html
         body: |
-                Build ${{ inputs.status }} for ${{ github.repository }}
-                Environment: ${{ inputs.environment }}
-                Commit: ${{ github.sha }}
-                Actor: ${{ github.actor }}
-                Workflow: ${{ github.workflow }}
-                Run ID: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            Build ${{ inputs.status }} for ${{ github.repository }}
+            Environment: ${{ inputs.environment }}
+            Commit: ${{ github.sha }}
+            Actor: ${{ github.actor }}
+            Workflow: ${{ github.workflow }}
+            Run ID: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            log_summary: ${{ inputs.log_summary }}
+
