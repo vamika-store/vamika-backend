@@ -29,14 +29,14 @@ jobs:
       - name: Build Spring Boot App
         run: mvn -B package -DskipTests
 
-      - name: Upload JUnit Test Reports
-        uses: actions/upload-artifact@v2
-        with:
-          name: backend-junit-reports
-          path: target/surefire-reports/
+      # - name: Upload JUnit Test Reports
+      #   uses: actions/upload-artifact@v2
+      #   with:
+      #     name: backend-junit-reports
+      #     path: target/surefire-reports/
 
-      - name: Upload JaCoCo Coverage Report
-        uses: actions/upload-artifact@v2
-        with:
-          name: backend-jacoco-report
-          path: target/site/jacoco/
+      # - name: Upload JaCoCo Coverage Report
+      #   uses: actions/upload-artifact@v2
+      #   with:
+      #     name: backend-jacoco-report
+      #     path: target/site/jacoco/
