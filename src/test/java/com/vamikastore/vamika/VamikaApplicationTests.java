@@ -12,3 +12,4 @@ class VamikaApplicationTests {
     void contextLoads() {
     }
 }
+
