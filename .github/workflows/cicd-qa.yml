@@ -40,11 +40,17 @@ jobs:
         run: |
           ls -lR target/site/jacoco/
 
+      - name: Manually Download Upload Artifact Action
+        run: |
+          git clone https://github.com/actions/upload-artifact.git
+          cd upload-artifact
+          git checkout v3.1.2
+
       - name: Upload JUnit Test Reports
-        uses: actions/upload-artifact@v3
+        uses: ./upload-artifact
         with:
           name: backend-junit-reports
-      #     path: target/surefire-reports/
+          path: target/surefire-reports/
 
       # - name: Upload JaCoCo Coverage Report
       #   uses: actions/upload-artifact@v2
