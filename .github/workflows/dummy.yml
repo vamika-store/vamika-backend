@@ -24,10 +24,10 @@ jobs:
           mkdir -p target/site/jacoco
           echo "Dummy coverage report" > target/site/jacoco/coverage.html
 
-      # - name: Upload Test Reports
-      #   uses: actions/upload-artifact@v3.1.2
-      #   with:
-      #     name: test-reports
-      #     path: |
-      #       target/surefire-reports/*.xml
-      #       target/site/jacoco/*.html
+      - name: Upload Test Reports
+        uses: actions/upload-artifact@main
+        with:
+          name: test-reports
+          path: |
+            target/surefire-reports/*.xml
+            target/site/jacoco/*.html
