@@ -21,7 +21,7 @@ jobs:
           echo "Dummy coverage report" > target/site/jacoco/coverage.html
 
       - name: Upload Test Reports
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v3.1.2
         with:
           name: test-reports
           path: |
