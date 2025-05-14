@@ -1,6 +1,7 @@
 name: Automation testing-dev
 
 on:
+  workflow_dispatch:
   #push:
   #  branches:
   #    - dev
