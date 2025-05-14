@@ -37,14 +37,14 @@ jobs:
         run: |
           ls -lR target/site/jacoco/
       
-      # - name: Upload Test Reports
-      #   uses: actions/upload-artifact@v3
-      #   with:
-      #     name: test-reports
-      #     path: |
-      #       target/surefire-reports/*.xml
-      #       target/site/jacoco/*.html
-      #     if-no-files-found: warn
+      - name: Upload Test Reports
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-reports
+          path: |
+            target/surefire-reports/*.xml
+            target/site/jacoco/*.html
+          if-no-files-found: warn
 
       - name: Send Test Reports via Email
         uses: dawidd6/action-send-mail@v3

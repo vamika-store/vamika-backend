@@ -1,9 +1,7 @@
 name: Test Upload Artifact
 
 on:
-  push:
-    branches:
-      - dev
+  workflow_dispatch:
 
 jobs:
   test:
