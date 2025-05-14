@@ -28,7 +28,7 @@ jobs:
         id: parse
         uses: ./.github/actions/parse-maven-logs
         with:
-          build_status: ${{ steps.build.outputs.status }}
+          build_status: ${{ steps.build.outputs.exit_code }}
 
       - name: Email Notification
         if: always()
