@@ -10,7 +10,7 @@ inputs:
     required: true
 
 runs:
-  using: composite
+  using: "composite"
   steps:
     - name: Parse EMAIL_CONFIG input
       shell: bash
