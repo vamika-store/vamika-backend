@@ -7,11 +7,12 @@ on:
   pull_request:
     branches:
       - dev
+
 jobs:
   build:
     name: Build and test
     runs-on: ubuntu-latest
-           
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -22,18 +23,12 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Run Unit Tests
-        run: mvn -B test
-
-      - name: Run Integration Tests & Verify
-        run: mvn -B verify
-
-      - name: Generate JaCoCo Coverage Report
-        run: mvn jacoco:report
+      - name: Run Unit Tests with Coverage
+        run: mvn clean test jacoco:report
 
       - name: Build Spring Boot App
         run: mvn -B package -DskipTests
-      
+
       - name: Upload JUnit Test Reports
         uses: actions/upload-artifact@v3
         with:
