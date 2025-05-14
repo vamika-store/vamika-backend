@@ -45,18 +45,37 @@ jobs:
             target/surefire-reports/*.xml
             target/site/jacoco/*.html
           if-no-files-found: warn
-
-      - name: Send Test Reports via Email
-        uses: dawidd6/action-send-mail@v3
+      
+      - name: Notify on success
+        if: success()
+        run: echo "Build and tests passed successfully!"
+        uses: ./.github/actions/notify-email
         with:
-          server_address: "smtp.gmail.com"
-          server_port: "587"
-          username: "vamika6522@gmail.com"
-          password: "arjvepxvfdrctuei"
-          subject: "Test Reports - Build #${{ github.run_number }}"
-          to: "chvamshikrishna24@gmail.com"
-          from: "vamika6522@gmail.com"
-          body: "Please find the attached test reports."
-          attachments: |
-            target/surefire-reports/*.xml
-            target/site/jacoco/*.html
+          status: success
+          environment: dev
+
+
+      - name: Notify on failure
+        if: failure()
+        run: echo "Build or tests failed. Please check the logs.
+        uses: ./.github/actions/notify-email
+        with:
+          status: failure
+          environment: dev
+    
+
+
+      # - name: Send Test Reports via Email
+      #   uses: dawidd6/action-send-mail@v3
+      #   with:
+      #     server_address: "smtp.gmail.com"
+      #     server_port: "587"
+      #     username: "vamika6522@gmail.com"
+      #     password: "arjvepxvfdrctuei"
+      #     subject: "Test Reports - Build #${{ github.run_number }}"
+      #     to: "chvamshikrishna24@gmail.com"
+      #     from: "vamika6522@gmail.com"
+      #     body: "Please find the attached test reports."
+      #     attachments: |
+      #       target/surefire-reports/*.xml
+      #       target/site/jacoco/*.html
