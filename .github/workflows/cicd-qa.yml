@@ -29,6 +29,13 @@ jobs:
       - name: Build Spring Boot App
         run: mvn -B package -DskipTests
 
+      - name: surefire-reports
+        run: |
+          ls -lR target/surefire-reports
+      - name: jacoco-reports
+        run: |
+          ls -lR target/site/jacoco/
+
       # - name: Upload JUnit Test Reports
       #   uses: actions/upload-artifact@v2
       #   with:
