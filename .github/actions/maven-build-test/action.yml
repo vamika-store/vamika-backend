@@ -10,5 +10,5 @@ runs:
       run: |
         mkdir -p logs
         set -o pipefail
-        mvn clean test | tee maven.log
+        mvn clean test | tee logs/maven.log
         echo "status=$?" >> $GITHUB_OUTPUT
