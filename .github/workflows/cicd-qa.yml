@@ -17,19 +17,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Test Network Connectivity
-        run: curl -I https://github.com
-
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '17'
       
-      - name: Test SMTP Connectivity
-        run: |
-          openssl s_client -starttls smtp -connect smtp.gmail.com:587
-
       - name: Run Unit Tests with Coverage
         run: mvn clean test jacoco:report
 
@@ -39,22 +32,19 @@ jobs:
       - name: surefire-reports
         run: |
           ls -lR target/surefire-reports
-          chmod 777 target/surefire-reports/*.xml
+      
       - name: jacoco-reports
         run: |
           ls -lR target/site/jacoco/
-
-      # - name: Manually Download Upload Artifact Action
-      #   run: |
-      #     git clone https://github.com/actions/upload-artifact.git
-      #     cd upload-artifact
-      #     git checkout v3.1.2
-
-      # - name: Upload JUnit Test Reports
-      #   uses: ./upload-artifact
-      #   with:
-      #     name: backend_junit_reports
-      #     path: target/surefire-reports/
+      
+      - name: Upload Test Reports
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-reports
+          path: |
+            target/surefire-reports/*.xml
+            target/site/jacoco/*.html
+          if-no-files-found: warn
 
       - name: Send Test Reports via Email
         uses: dawidd6/action-send-mail@v3
