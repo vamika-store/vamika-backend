@@ -58,16 +58,14 @@ jobs:
 
       - name: Send Test Reports via Email
         uses: dawidd6/action-send-mail@v3
-        env:
-          ACTIONS_STEP_DEBUG: true
         with:
-          server_address: ${{ fromJson(secrets.EMAIL_CONFIG).server }}
-          server_port: ${{ fromJson(secrets.EMAIL_CONFIG).port }}
-          username: ${{ fromJson(secrets.EMAIL_CONFIG).username }}
-          password: ${{ fromJson(secrets.EMAIL_CONFIG).password }}
+          server_address: "smtp.gmail.com"
+          server_port: "587"
+          username: "vamika6522@gmail.com"
+          password: "arjvepxvfdrctuei"
           subject: "Test Reports - Build #${{ github.run_number }}"
           to: "chvamshikrishna24@gmail.com"
-          from: ${{ fromJson(secrets.EMAIL_CONFIG).username }}
+          from: "vamika6522@gmail.com"
           body: "Please find the attached test reports."
           attachments: |
             target/surefire-reports/*.xml
