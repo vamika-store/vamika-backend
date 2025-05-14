@@ -8,6 +8,7 @@ runs:
       id: build
       shell: bash
       run: |
+        mkdir -p logs
         set -o pipefail
-        mvn clean install -B 2>&1 | tee maven.log
+        mvn clean test | tee logs/maven.log
         echo "status=$?" >> $GITHUB_OUTPUT
