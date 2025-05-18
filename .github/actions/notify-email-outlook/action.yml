@@ -9,7 +9,7 @@ inputs:
   environment:
     description: Environment name (e.g., dev, prod)
     required: true
-  email_config:
+  email_config_outlook:
     description: JSON string containing email configuration
     required: true
   log_summary:
