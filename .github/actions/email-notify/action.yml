@@ -8,6 +8,9 @@ inputs:
     required: true
   summary:
     required: true
+  email_config:
+    required: true
+    description: JSON string containing email configuration (username, password, to)
 
 runs:
   using: "composite"

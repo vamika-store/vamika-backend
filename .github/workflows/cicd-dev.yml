@@ -46,24 +46,15 @@ jobs:
             target/surefire-reports/*.xml
             target/site/jacoco/*.html
           if-no-files-found: warn
-      - name: Generate success summary
-        if: success()
-        run: echo "Build completed successfully at $(date)" > summary.txt
-        
-      - name: Generate failure summary
-        if: failure()
-        run: |
-          echo "Build failed. Recent logs:" > summary.txt
-          tail -n 50 target/surefire-reports/*.txt >> summary.txt || echo "No logs found" >> summary.txt
-      - name: Read log summary
-        id: read_summary
-        run: |
-          SUMMARY=$(cat summary.txt)
-          SUMMARY_ESCAPED="${SUMMARY//'%'/'%25'}"
-          SUMMARY_ESCAPED="${SUMMARY_ESCAPED//$'\n'/'%0A'}"
-          SUMMARY_ESCAPED="${SUMMARY_ESCAPED//$'\r'/'%0D'}"
-          echo "summary=$SUMMARY_ESCAPED" >> $GITHUB_OUTPUT
+      - name: Parse Maven Logs
+        id: parse
+        uses: ./.github/actions/parse-maven-logs
+        with:
+          build_status: ${{ job.status }}
 
+      - name: Generate HTML report
+        run: echo "${{ steps.parse.outputs.log_summary }}" > report.html
+        
       - name: Email Notification
         if: always()
         uses: ./.github/actions/email-notify
