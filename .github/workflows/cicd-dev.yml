@@ -65,13 +65,13 @@ jobs:
           echo "summary=$SUMMARY_ESCAPED" >> $GITHUB_OUTPUT
 
       - name: Email Notification
-              if: always()
-              uses: ./.github/actions/email-notify
-              with:
-                status: ${{ steps.build.outputs.status == '0' && 'success' || 'failure' }}
-                environment: dev
-                email_config: ${{ vars.EMAIL_CONFIG }}
-                summary: ${{ steps.parse.outputs.log_summary }}
+        if: always()
+        uses: ./.github/actions/email-notify
+        with:
+          status: ${{ steps.build.outputs.status == '0' && 'success' || 'failure' }}
+          environment: dev
+          email_config: ${{ vars.EMAIL_CONFIG }}
+          summary: ${{ steps.parse.outputs.log_summary }}
           
   build-image_tag_update:
     if: github.event_name == 'push'
