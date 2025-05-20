@@ -33,4 +33,5 @@ runs:
         to: ${{ env.EMAIL_TO }}
         from: ${{ env.EMAIL_USERNAME }}
         subject: "[${{ inputs.environment }}] Build ${{ inputs.status == 'success' && '✅ SUCCESS' || '❌ FAILURE' }} - ${{ github.repository }}"
+        content_type: html
         html_body: file://report.html
