@@ -27,11 +27,11 @@ runs:
         fi
 
         echo "<h3>Test Summary:</h3><table border='1'><tr><th>Summary</th></tr>" >> email.html
-        grep -E "Tests run:" maven.log | sed 's/^/<tr><td>/' | sed 's/$/<\/td><\/tr>/' >> email.html
+        grep -E "Tests run:" maven.log | sed 's/^/<tr><td>/' | sed 's/$/<\/td><\/tr>/' >> email.html || true
         echo "</table>" >> email.html
 
         echo "<h3>Failures & Errors:</h3><table border='1'><tr><th>Error</th></tr>" >> email.html
-        grep -A 3 -E "<<< FAILURE!|<<< ERROR!" maven.log | sed 's/^/<tr><td>/' | sed 's/$/<\/td><\/tr>/' >> email.html
+        grep -A 3 -E "<<< FAILURE!|<<< ERROR!" maven.log | sed 's/^/<tr><td>/' | sed 's/$/<\/td><\/tr>/' >> email.html || true
         echo "</table>" >> email.html
 
         echo "</body></html>" >> email.html
