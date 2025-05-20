@@ -55,6 +55,11 @@ jobs:
       - name: Generate HTML report
         run: echo "${{ steps.parse.outputs.log_summary }}" > report.html
         
+      - name: Debug report.html
+        run: |
+          echo "Report HTML:"
+          cat report.html
+
       - name: Email Notification
         if: always()
         uses: ./.github/actions/email-notify
