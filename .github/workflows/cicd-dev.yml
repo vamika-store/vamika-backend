@@ -64,7 +64,7 @@ jobs:
           email_config: ${{ vars.EMAIL_CONFIG }}
           summary: ${{ steps.parse.outputs.log_summary }}
           
-  build-image_tag_update:
+  deploy:
     if: github.event_name == 'push'
     needs: build
     runs-on: ubuntu-latest
