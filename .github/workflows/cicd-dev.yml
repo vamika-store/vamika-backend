@@ -46,28 +46,28 @@ jobs:
             target/surefire-reports/*.xml
             target/site/jacoco/*.html
           if-no-files-found: warn
-      - name: Parse Maven Logs
-        id: parse
-        uses: ./.github/actions/parse-maven-logs
-        with:
-          build_status: ${{ job.status }}
+      # - name: Parse Maven Logs
+      #   id: parse
+      #   uses: ./.github/actions/parse-maven-logs
+      #   with:
+      #     build_status: ${{ job.status }}
 
-      - name: Generate HTML report
-        run: echo "${{ steps.parse.outputs.log_summary }}" > report.html
+      # - name: Generate HTML report
+      #   run: echo "${{ steps.parse.outputs.log_summary }}" > report.html
         
-      - name: Debug report.html
-        run: |
-          echo "Report HTML:"
-          cat report.html
+      # - name: Debug report.html
+      #   run: |
+      #     echo "Report HTML:"
+      #     cat report.html
 
-      - name: Email Notification
-        if: always()
-        uses: ./.github/actions/email-notify
-        with:
-          status: ${{ steps.build.outputs.status == '0' && 'success' || 'failure' }}
-          environment: dev
-          email_config: ${{ vars.EMAIL_CONFIG }}
-          summary: ${{ steps.parse.outputs.log_summary }}
+      # - name: Email Notification
+      #   if: always()
+      #   uses: ./.github/actions/email-notify
+      #   with:
+      #     status: ${{ steps.build.outputs.status == '0' && 'success' || 'failure' }}
+      #     environment: dev
+      #     email_config: ${{ vars.EMAIL_CONFIG }}
+      #     summary: ${{ steps.parse.outputs.log_summary }}
           
   deploy:
     if: github.event_name == 'push'
