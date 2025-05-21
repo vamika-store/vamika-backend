@@ -1,4 +1,5 @@
-name: Automation testing-dev
+name: CICD-vamika-backend-dev
+description: CI/CD pipeline for Vamika Backend on dev branch
 
 on:
   workflow_dispatch:
