@@ -1,0 +1,99 @@
+name: CICD-vamika-backend-qa
+description: CI/CD pipeline for Vamika Backend on qa branch
+
+on:
+  workflow_dispatch:
+  push:
+   branches:
+     - qa
+  pull_request:
+   branches:
+     - qa
+
+jobs:
+  build:
+    name: Build and test
+    runs-on: ubuntu-latest
+        if: 
+      github.base_ref == 'qa' &&
+      github.head_ref == 'dev'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      
+      - name: Run Unit Tests with Coverage
+        run: mvn clean test jacoco:report | tee maven.log
+
+      - name: Build Spring Boot App
+        run: mvn -B package -DskipTests
+
+      - name: surefire-reports
+        run: |
+          ls -lR target/surefire-reports
+      
+      - name: jacoco-reports
+        run: |
+          ls -lR target/site/jacoco/
+      
+      - name: Upload Test Reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports
+          path: |
+            target/surefire-reports/*.xml
+            target/site/jacoco/*.html
+          if-no-files-found: warn
+          
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    if:
+      github.event_name == 'push' &&
+      github.base_ref == 'qa' &&
+      github.head_ref == 'dev'
+    env:
+        IMAGE_NAME: "vamika-backend-qa"
+        BUILDER_IMAGE: "maven:3.9.9-ibm-semeru-17-focal"
+    steps:
+        - name: Checkout code
+          uses: actions/checkout@v4
+        - name: Generate Version (Based on Timestamp)
+          id: set_version
+          run: echo "VERSION=v1.0.0-$(date +%Y-%m-%d-%H%M%S)" >>$GITHUB_ENV
+        - name: Docker Login
+          run: |
+            echo "${{ secrets.IMAGE_REGISTRY_TOKEN }}" | docker login -u ${{ secrets.IMAGE_REGISTRY_USERNAME }} --password-stdin
+        - name: Docker Build
+          run: |
+            COMMIT_AUTHOR=$(git log -1 --pretty=%an)
+            COMMIT_ID=$(git rev-parse --short "$GITHUB_SHA")
+            docker buildx build \
+              --build-arg BUILDER_IMAGE="${{ env.BUILDER_IMAGE }}" \
+              --label "AUTHOR=${COMMIT_AUTHOR}" \
+              --label "COMMIT_ID=${COMMIT_ID}" \
+              -t "${{ secrets.IMAGE_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.VERSION }}" \
+              .
+        - name: Push Docker image
+          run: |
+            docker push ${{ secrets.IMAGE_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.VERSION }}
+        - name: Docker Logout
+          run: |
+            docker logout ${{ secrets.IMAGE_REGISTRY }}
+        - name: Update values.yaml with new image tag
+          run: |
+            git config --global user.email "chvamshikrishna24@gmail.com"
+            git config --global user.name "vamshireddy24"
+            git clone https://github.com/vamika-store/vamika-backend.git
+            cd vamika-backend
+            git checkout ${{ github.head_ref }}
+            sed -i "s|tag: .*|tag: \"${{ env.VERSION }}\"|g" charts/vm-microservice/values.yaml
+            git add charts/vm-microservice/values.yaml
+            git commit -m "Update backend image tag to ${{ env.VERSION }} [skip ci]"
+            git push https://x-access-token:${{ secrets.GH_PAT }}@github.com/vamika-store/vamika-backend.git ${{ github.head_ref }}
