@@ -9,7 +9,7 @@ inputs:
   environment:
     description: Environment name (e.g., dev, prod)
     required: true
-  email_config:
+  email_config_outlook:
     description: JSON string containing email configuration
     required: true
   log_summary:
@@ -22,20 +22,20 @@ runs:
     - name: Parse EMAIL_CONFIG input
       shell: bash
       run: |
-        echo '${{ inputs.email_config }}' > email_config.json
-        echo "EMAIL_USERNAME=$(jq -r .username email_config.json)" >> $GITHUB_ENV
-        echo "EMAIL_PASSWORD=$(jq -r .password email_config.json)" >> $GITHUB_ENV
-        echo "EMAIL_TO=$(jq -r .to email_config.json)" >> $GITHUB_ENV
+        echo '${{ inputs.email_config_outlook }}' > email_config_outlook.json
+        echo "EMAIL_USERNAME=$(jq -r .username email_config_outlook.json)" >> $GITHUB_ENV
+        echo "EMAIL_PASSWORD=$(jq -r .password email_config_outlook.json)" >> $GITHUB_ENV
+        echo "EMAIL_TO=$(jq -r .to email_config_outlook.json)" >> $GITHUB_ENV
 
     - name: Send Email
       uses: dawidd6/action-send-mail@v3
       with:
-        server_address: smtp.gmail.com
+        server_address: smtp.outlook.com
         server_port: 587
         username: ${{ env.EMAIL_USERNAME }}
         password: ${{ env.EMAIL_PASSWORD }}
-        to: ${{ env.EMAIL_TO }}
-        from: ${{ env.EMAIL_USERNAME }} 
+        from: ${{ env.EMAIL_USERNAME }}
+        to: ${{ env.EMAIL_TO }} 
         subject: "[${{ inputs.environment }}] Build ${{ inputs.status == 'success' && format('✅ Successful - {0}', github.repository) || format('❌ Failed - {0}', github.repository) }}"
         content_type: html
         body: |

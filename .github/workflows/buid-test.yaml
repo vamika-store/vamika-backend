@@ -2,12 +2,12 @@ name: Build and Test Spring Boot App
 
 on:
   workflow_dispatch:
-  # push:
-  #   branches:
-  #     - main
-  # pull_request:
-  #   branches:
-  #     - main
+  push:
+    branches:
+      - dev
+  pull_request:
+    branches:
+      - dev
 
 jobs:
   build:
@@ -17,11 +17,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Java 23
+      - name: Set up Java 17
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '23'
+          java-version: '17'
           cache: 'maven'
         
       - name: Build with Maven
@@ -44,3 +44,13 @@ jobs:
         with:
           name: built-jar
           path: target/*.jar
+
+      - name: Email Notification
+        if: always()
+        uses: ./.github/actions/notify-email-outlook
+        with:
+          status: ${{ steps.build.outputs.status == '0' && 'success' || 'failure' }}
+          environment: dev
+          email_config_outlook: ${{ vars.EMAIL_CONFIG_OUTLOOK }}
+          summary: ${{ steps.parse.outputs.log_summary }}
+      

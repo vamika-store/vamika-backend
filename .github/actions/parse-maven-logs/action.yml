@@ -14,7 +14,7 @@ outputs:
 runs:
   using: "composite"
   steps:
-    - name: Parse Maven Log
+    - name: Parse Maven Log (HTML Table)
       id: format
       shell: bash
       run: |
@@ -26,16 +26,16 @@ runs:
           echo "<h2 style='color:red;'>Build Failed</h2>" >> email.html
         fi
 
-        echo "<h3>Test Summary:</h3><ul>" >> email.html
-        grep -E "Tests run:" maven.log | sed 's/^/<li>/' | sed 's/$/<\/li>/' >> email.html
-        echo "</ul>" >> email.html
+        echo "<h3>Test Summary:</h3><table border='1'><tr><th>Summary</th></tr>" >> email.html
+        grep -E "Tests run:" maven.log | sed 's/^/<tr><td>/' | sed 's/$/<\/td><\/tr>/' >> email.html || true
+        echo "</table>" >> email.html
 
-        echo "<h3>Failures & Errors:</h3><ul>" >> email.html
-        grep -A 3 -E "<<< FAILURE!|<<< ERROR!" maven.log | sed 's/^/<li>/' | sed 's/$/<\/li>/' >> email.html
-        echo "</ul>" >> email.html
+        echo "<h3>Failures & Errors:</h3><table border='1'><tr><th>Error</th></tr>" >> email.html
+        grep -A 3 -E "<<< FAILURE!|<<< ERROR!" maven.log | sed 's/^/<tr><td>/' | sed 's/$/<\/td><\/tr>/' >> email.html || true
+        echo "</table>" >> email.html
 
         echo "</body></html>" >> email.html
 
-        echo "html<<EOF" >> $GITHUB_OUTPUT
+        echo "log_summary<<EOF" >> $GITHUB_OUTPUT
         cat email.html >> $GITHUB_OUTPUT
         echo "EOF" >> $GITHUB_OUTPUT

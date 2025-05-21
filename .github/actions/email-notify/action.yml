@@ -8,6 +8,9 @@ inputs:
     required: true
   summary:
     required: true
+  email_config:
+    required: true
+    description: JSON string containing email configuration (username, password, to)
 
 runs:
   using: "composite"
@@ -30,5 +33,4 @@ runs:
         to: ${{ env.EMAIL_TO }}
         from: ${{ env.EMAIL_USERNAME }}
         subject: "[${{ inputs.environment }}] Build ${{ inputs.status == 'success' && '✅ SUCCESS' || '❌ FAILURE' }} - ${{ github.repository }}"
-        content_type: text/html
-        body: file://report.html
+        html_body: file://report.html
