@@ -18,6 +18,12 @@ jobs:
       (github.event_name == 'push' && github.ref == 'refs/heads/qa')
 
     steps:
+      - name: Debug GitHub Context
+        run: |
+          echo "Event: ${{ github.event_name }}"
+          echo "Base Ref: ${{ github.base_ref }}"
+          echo "Head Ref: ${{ github.head_ref }}"
+          echo "Ref: ${{ github.ref }}"
       - name: Checkout code
         uses: actions/checkout@v4
 
