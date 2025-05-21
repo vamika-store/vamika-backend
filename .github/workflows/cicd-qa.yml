@@ -14,9 +14,9 @@ jobs:
   build:
     name: Build and test
     runs-on: ubuntu-latest
-    if: 
-      github.base_ref == 'qa' &&
-      github.head_ref == 'dev'
+    if: |
+      (github.event_name == 'pull_request' && github.base_ref == 'qa' && github.head_ref == 'dev') ||
+      (github.event_name == 'push' && github.ref == 'refs/heads/qa')
 
     steps:
       - name: Checkout code
@@ -54,10 +54,7 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-latest
-    if:
-      github.event_name == 'push' &&
-      github.base_ref == 'qa' &&
-      github.head_ref == 'dev'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/qa'
     env:
         IMAGE_NAME: "vamika-backend-qa"
         BUILDER_IMAGE: "maven:3.9.9-ibm-semeru-17-focal"
