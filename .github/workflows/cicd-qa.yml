@@ -13,9 +13,9 @@ jobs:
   build:
     name: Build and test
     runs-on: ubuntu-latest
-    if: |
-      (github.event_name == 'pull_request' && github.base_ref == 'qa' && github.head_ref == 'dev') ||
-      (github.event_name == 'push' && github.ref == 'refs/heads/qa')
+    # if: |
+    #  (github.event_name == 'pull_request' && github.base_ref == 'qa' && github.head_ref == 'dev') ||
+    #  (github.event_name == 'push' && github.ref == 'refs/heads/qa')
 
     steps:
       - name: Debug GitHub Context
