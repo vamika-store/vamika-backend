@@ -92,8 +92,8 @@ jobs:
             git config --global user.name "vamshireddy24"
             git clone https://github.com/vamika-store/vamika-backend.git
             cd vamika-backend
-            git checkout ${{ github.head_ref }}
+            git checkout qa
             sed -i "s|tag: .*|tag: \"${{ env.VERSION }}\"|g" charts/vm-microservice/values-qa.yaml
             git add charts/vm-microservice/values-qa.yaml
             git commit -m "Update backend image tag to ${{ env.VERSION }} [skip ci]"
-            git push https://x-access-token:${{ secrets.GH_PAT }}@github.com/vamika-store/vamika-backend.git ${{ github.head_ref }}
+            git push https://x-access-token:${{ secrets.GH_PAT }}@github.com/vamika-store/vamika-backend.git qa
