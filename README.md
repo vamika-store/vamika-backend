@@ -5,3 +5,5 @@ latest updated version
 how to resolve branching strategy
 
 implemented dev and qa environments
+
+all are completed
