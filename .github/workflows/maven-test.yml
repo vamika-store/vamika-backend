@@ -3,6 +3,7 @@ name: UAT Actions Build and Test
 on:
   push:
     branches:
+      - feature/test
       - uat
       - develop-GitHubActions
   pull_request:
