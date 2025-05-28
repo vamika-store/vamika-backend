@@ -1,13 +1,13 @@
 name: UAT Actions Build and Test
 
 on:
-  push:
-    branches:
-      - feature/test
-      - uat
-      - develop-GitHubActions
-  pull_request:
-    types: [opened, reopened, synchronize]
+  # push:
+  #   branches:
+  #     - feature/test
+  #     - uat
+  #     - develop-GitHubActions
+  # pull_request:
+  #   types: [opened, reopened, synchronize]
   workflow_dispatch:
     inputs:
       test_names_list:
