@@ -1,13 +1,14 @@
-name: UAT Actions Build and Test (Module Wise)
+name: UAT Actions Build and Test
 
 on:
+  push:
+    branches:
+      - uat
+      - develop-GitHubActions
+  pull_request:
+    types: [opened, reopened, synchronize]
   workflow_dispatch:
     inputs:
-      module_name:
-        type: string
-        description: "Maven sub-module to test (leave blank for root)"
-        required: false
-        default: ""
       test_names_list:
         type: string
         description: "List of test names to run"
@@ -61,28 +62,20 @@ jobs:
         java-version: '17'
         cache: maven
 
+    - name: Decode API_PRIVATE_KEY from Base64
+      run: |
+        echo "${{ secrets.API_PRIVATE_KEY_BASE64 }}" | base64 -d > api_private_key.pem
+      shell: bash
+
     - name: Debug Environment Variables
       run: env
 
     - name: Install dependencies
-      run: mvn clean install
+      run: mvn clean install:install-file -Dfile='./libs/zfj-cloud-rest-client-1.3-jar-with-dependencies.jar' -DgroupId='com.thed.zephyr.connect' -DartifactId='zfj-cloud-rest-client' -Dversion='1.3' -Dpackaging=jar
 
-    - name: Run Tests (Module Wise)
+    - name: Run Tests
       run: |
         chmod +x src/test/resources/chromedriver
-        if [ -n "${{ inputs.module_name }}" ]; then
-          echo "Running tests for module: ${{ inputs.module_name }}"
-          mvn -pl ${{ inputs.module_name }} test \
-            -Dtest="${{ inputs.test_names_list }}" \
-            -Dexecution.headless=true \
-            -Ddebug.attachDriverSession=false \
-            -Ddebug.onlyFirstExecution=${{ env.ONLY_FIRST_EXECUTION }} \
-            -Djira.connection.enabled=${{ env.UPLOAD_TO_ZEPHYR }} \
-            -Djira.cycle.name="${{ env.ZEPHYR_CYCLE }}" \
-            -DfailIfNoTests=false \
-            -Dexecution.params.overwrite="${{ env.OVERWRITE_PARAMS }}"
-        else
-          echo "Running tests for root project"
           mvn test \
             -Dtest="${{ inputs.test_names_list }}" \
             -Dexecution.headless=true \
@@ -92,5 +85,39 @@ jobs:
             -Djira.cycle.name="${{ env.ZEPHYR_CYCLE }}" \
             -DfailIfNoTests=false \
             -Dexecution.params.overwrite="${{ env.OVERWRITE_PARAMS }}"
-        fi
 
+    - name: SonarQube Scan
+      env:
+        SONAR_LOGIN: ${{ secrets.SONAR_TOKEN }}
+      run: |
+        chmod +x src/test/resources/chromedriver
+        mvn clean verify sonar:sonar \
+          -Dsonar.projectKey=procter-gamble_NA-Platinum-Test-Automation_AYw-oBBV461ge71raEvS \
+          -Dsonar.host.url=${{ env.SONAR_HOST_URL }} \
+          -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
+          -Dsonar.sources=src/main/,src/test/ \
+          -Dsonar.inclusions=src/**/*.java \
+          -Dsonar.test.inclusions=src/test/java/**/*.java \
+          -Dsonar.java.binaries=target/classes
+
+    - name: Wait for SonarQube Quality Gate
+      run: |
+        PROJECT_KEY="procter-gamble_NA-Platinum-Test-Automation_AYw-oBBV461ge71raEvS"
+        SONAR_API_URL="${{ env.SONAR_HOST_URL }}/api/qualitygates/project_status?projectKey=${PROJECT_KEY}"
+
+        for i in {1..60}; do
+          STATUS=$(curl -s -u ${{ secrets.SONAR_TOKEN }}: "${SONAR_API_URL}" | jq -r '.projectStatus.status')
+          if [ "${STATUS}" == "OK" ]; then
+            echo "Quality Gate passed"
+            exit 0
+          elif [ "${STATUS}" == "ERROR" ]; then
+            echo "Quality Gate failed"
+            exit 1
+          else
+            echo "Quality Gate status: ${STATUS}. Retrying in 30 seconds..."
+            sleep 30
+          fi
+        done
+
+        echo "Quality Gate check timed out"
+        exit 1
