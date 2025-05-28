@@ -63,16 +63,11 @@ jobs:
         java-version: '17'
         cache: maven
 
-    - name: Decode API_PRIVATE_KEY from Base64
-      run: |
-        echo "${{ secrets.API_PRIVATE_KEY_BASE64 }}" | base64 -d > api_private_key.pem
-      shell: bash
-
     - name: Debug Environment Variables
       run: env
 
     - name: Install dependencies
-      run: mvn clean install:install-file -Dfile='./libs/zfj-cloud-rest-client-1.3-jar-with-dependencies.jar' -DgroupId='com.thed.zephyr.connect' -DartifactId='zfj-cloud-rest-client' -Dversion='1.3' -Dpackaging=jar
+      run: mvn clean install
 
     - name: Run Tests
       run: |
