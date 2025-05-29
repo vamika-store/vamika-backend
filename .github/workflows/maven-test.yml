@@ -69,5 +69,5 @@ jobs:
 
     - name: Run Tests (Module Wise)
       run: |
-          mvn -pl ${{ inputs.module_name }} test 
+          mvn ${{ inputs.module_name }} test 
 
