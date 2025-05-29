@@ -11,7 +11,7 @@ on:
       test_names_list:
         type: string
         description: "List of test names to run"
-        required: true
+        required: false
         default: ""
       only_first_execution:
         type: boolean
@@ -20,11 +20,11 @@ on:
       upload_to_zephyr:
         type: boolean
         description: "Upload results to Zephyr"
-        default: true
+        default: false
       zephyr_cycle:
         type: string
         description: "Zephyr cycle name"
-        required: true
+        required: false
         default: "Github_Actions_Cycle"
       overwrite_params:
         type: string
