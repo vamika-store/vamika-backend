@@ -13,26 +13,26 @@ on:
         description: "List of test names to run"
         required: false
         default: ""
-      # only_first_execution:
-      #   type: boolean
-      #   description: "Run only the first execution"
-      #   default: false
-      # upload_to_zephyr:
-      #   type: boolean
-      #   description: "Upload results to Zephyr"
-      #   default: false
-      # zephyr_cycle:
-      #   type: string
-      #   description: "Zephyr cycle name"
-      #   required: false
-      #   default: "Github_Actions_Cycle"
-      # overwrite_params:
-      #   type: string
-      #   description: "Overwrite execution parameters"
-      #   default: "{\n\t\n}"
-      # batch_time:
-      #   type: string
-      #   description: "Batch time for scheduling"
+      only_first_execution:
+        type: boolean
+        description: "Run only the first execution"
+        default: false
+      upload_to_zephyr:
+        type: boolean
+        description: "Upload results to Zephyr"
+        default: false
+      zephyr_cycle:
+        type: string
+        description: "Zephyr cycle name"
+        required: false
+        default: "Github_Actions_Cycle"
+      overwrite_params:
+        type: string
+        description: "Overwrite execution parameters"
+        default: "{\n\t\n}"
+      batch_time:
+        type: string
+        description: "Batch time for scheduling"
 
 jobs:
   build:
@@ -67,7 +67,37 @@ jobs:
     - name: Install dependencies
       run: mvn clean install
 
-    - name: Run Tests (Module Wise)
+    - name: Run Tests (Module/Package Wise)
       run: |
-          mvn ${{ inputs.module_name }} test 
+        chmod +x src/test/resources/chromedriver
+        if [ -n "${{ inputs.module_name }}" ]; then
+          TEST_PATH="src/test/java/com/vamikastore/vamika/${{ inputs.module_name }}"
+          echo "Looking for tests in: $TEST_PATH"
+          TEST_CLASSES=$(find $TEST_PATH -name '*Test.java' | sed 's|src/test/java/||;s|/|.|g;s|.java$||' | paste -sd, -)
+          if [ -z "$TEST_CLASSES" ]; then
+            echo "No test classes found in $TEST_PATH"
+            exit 1
+          fi
+          echo "Running tests: $TEST_CLASSES"
+          mvn test \
+            -Dtest="$TEST_CLASSES" \
+            -Dexecution.headless=true \
+            -Ddebug.attachDriverSession=false \
+            -Ddebug.onlyFirstExecution=${{ env.ONLY_FIRST_EXECUTION }} \
+            -Djira.connection.enabled=${{ env.UPLOAD_TO_ZEPHYR }} \
+            -Djira.cycle.name="${{ env.ZEPHYR_CYCLE }}" \
+            -DfailIfNoTests=false \
+            -Dexecution.params.overwrite="${{ env.OVERWRITE_PARAMS }}"
+        else
+          echo "Running tests for root project"
+          mvn test \
+            -Dtest="${{ inputs.test_names_list }}" \
+            -Dexecution.headless=true \
+            -Ddebug.attachDriverSession=false \
+            -Ddebug.onlyFirstExecution=${{ env.ONLY_FIRST_EXECUTION }} \
+            -Djira.connection.enabled=${{ env.UPLOAD_TO_ZEPHYR }} \
+            -Djira.cycle.name="${{ env.ZEPHYR_CYCLE }}" \
+            -DfailIfNoTests=false \
+            -Dexecution.params.overwrite="${{ env.OVERWRITE_PARAMS }}"
+        fi
 
