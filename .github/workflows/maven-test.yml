@@ -38,17 +38,17 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    env:
-      API_CONSUMER_KEY: ${{ secrets.DEV_CONSUMER_KEY }}
-      API_PRIVATE_KEY: ${{ secrets.DEV_PRIVATE_KEY }}
-      SONAR_HOST_URL: 'https://sonarqubeenterprise.pgcloud.com/sonarqube'
-      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      TEST_NAMES_LIST: ${{ inputs.test_names_list }}
-      ONLY_FIRST_EXECUTION: ${{ inputs.only_first_execution }}
-      UPLOAD_TO_ZEPHYR: ${{ inputs.upload_to_zephyr }}
-      ZEPHYR_CYCLE: ${{ inputs.zephyr_cycle }}
-      OVERWRITE_PARAMS: ${{ inputs.overwrite_params }}
-      BATCH_TIME: ${{ inputs.batch_time }}
+    # env:
+    #   API_CONSUMER_KEY: ${{ secrets.DEV_CONSUMER_KEY }}
+    #   API_PRIVATE_KEY: ${{ secrets.DEV_PRIVATE_KEY }}
+    #   SONAR_HOST_URL: 'https://sonarqubeenterprise.pgcloud.com/sonarqube'
+    #   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+    #   TEST_NAMES_LIST: ${{ inputs.test_names_list }}
+    #   ONLY_FIRST_EXECUTION: ${{ inputs.only_first_execution }}
+    #   UPLOAD_TO_ZEPHYR: ${{ inputs.upload_to_zephyr }}
+    #   ZEPHYR_CYCLE: ${{ inputs.zephyr_cycle }}
+    #   OVERWRITE_PARAMS: ${{ inputs.overwrite_params }}
+    #   BATCH_TIME: ${{ inputs.batch_time }}
 
     steps:
     - name: Checkout code
@@ -74,23 +74,9 @@ jobs:
           echo "Running tests for module: ${{ inputs.module_name }}"
           mvn -pl ${{ inputs.module_name }} test \
             -Dtest="${{ inputs.test_names_list }}" \
-            -Dexecution.headless=true \
-            -Ddebug.attachDriverSession=false \
-            -Ddebug.onlyFirstExecution=${{ env.ONLY_FIRST_EXECUTION }} \
-            -Djira.connection.enabled=${{ env.UPLOAD_TO_ZEPHYR }} \
-            -Djira.cycle.name="${{ env.ZEPHYR_CYCLE }}" \
-            -DfailIfNoTests=false \
-            -Dexecution.params.overwrite="${{ env.OVERWRITE_PARAMS }}"
         else
           echo "Running tests for root project"
           mvn test \
             -Dtest="${{ inputs.test_names_list }}" \
-            -Dexecution.headless=true \
-            -Ddebug.attachDriverSession=false \
-            -Ddebug.onlyFirstExecution=${{ env.ONLY_FIRST_EXECUTION }} \
-            -Djira.connection.enabled=${{ env.UPLOAD_TO_ZEPHYR }} \
-            -Djira.cycle.name="${{ env.ZEPHYR_CYCLE }}" \
-            -DfailIfNoTests=false \
-            -Dexecution.params.overwrite="${{ env.OVERWRITE_PARAMS }}"
         fi
 
