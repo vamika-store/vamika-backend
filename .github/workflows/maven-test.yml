@@ -69,7 +69,6 @@ jobs:
 
     - name: Run Tests (Module/Package Wise)
       run: |
-        chmod +x src/test/resources/chromedriver
         if [ -n "${{ inputs.module_name }}" ]; then
           TEST_PATH="src/test/java/com/vamikastore/vamika/${{ inputs.module_name }}"
           echo "Looking for tests in: $TEST_PATH"
