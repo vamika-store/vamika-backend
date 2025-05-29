@@ -13,26 +13,26 @@ on:
         description: "List of test names to run"
         required: false
         default: ""
-      only_first_execution:
-        type: boolean
-        description: "Run only the first execution"
-        default: false
-      upload_to_zephyr:
-        type: boolean
-        description: "Upload results to Zephyr"
-        default: false
-      zephyr_cycle:
-        type: string
-        description: "Zephyr cycle name"
-        required: false
-        default: "Github_Actions_Cycle"
-      overwrite_params:
-        type: string
-        description: "Overwrite execution parameters"
-        default: "{\n\t\n}"
-      batch_time:
-        type: string
-        description: "Batch time for scheduling"
+      # only_first_execution:
+      #   type: boolean
+      #   description: "Run only the first execution"
+      #   default: false
+      # upload_to_zephyr:
+      #   type: boolean
+      #   description: "Upload results to Zephyr"
+      #   default: false
+      # zephyr_cycle:
+      #   type: string
+      #   description: "Zephyr cycle name"
+      #   required: false
+      #   default: "Github_Actions_Cycle"
+      # overwrite_params:
+      #   type: string
+      #   description: "Overwrite execution parameters"
+      #   default: "{\n\t\n}"
+      # batch_time:
+      #   type: string
+      #   description: "Batch time for scheduling"
 
 jobs:
   build:
