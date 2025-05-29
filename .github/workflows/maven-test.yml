@@ -69,13 +69,5 @@ jobs:
 
     - name: Run Tests (Module Wise)
       run: |
-        if [ -n "${{ inputs.module_name }}" ]; then
-          echo "Running tests for module: ${{ inputs.module_name }}"
-          mvn -pl ${{ inputs.module_name }} test \
-            -Dtest="${{ inputs.test_names_list }}" \
-        else
-          echo "Running tests for root project"
-          mvn test \
-            -Dtest="${{ inputs.test_names_list }}" \
-        fi
+          mvn -pl ${{ inputs.module_name }} test 
 
