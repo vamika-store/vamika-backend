@@ -69,7 +69,6 @@ jobs:
 
     - name: Run Tests (Module Wise)
       run: |
-        chmod +x src/test/resources/chromedriver
         if [ -n "${{ inputs.module_name }}" ]; then
           echo "Running tests for module: ${{ inputs.module_name }}"
           mvn -pl ${{ inputs.module_name }} test \
