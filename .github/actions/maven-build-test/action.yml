@@ -1,0 +1,13 @@
+name: Maven Build and Test
+description: Builds and tests a Maven project and saves logs.
+
+runs:
+  using: "composite"
+  steps:
+    - name: Build with Maven
+      id: maven
+      shell: bash
+      run: |
+        set -o pipefail
+        mvn clean test | tee maven.log
+        echo "exit_code=${PIPESTATUS[0]}" >> $GITHUB_OUTPUT

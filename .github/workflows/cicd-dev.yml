@@ -1,21 +1,19 @@
-name: CICD-vamika-backend-qa
+name: CICD-vamika-backend-dev
+description: CI/CD pipeline for Vamika Backend on dev branch
 
 on:
   workflow_dispatch:
   push:
    branches:
-     - qa
+     - dev
   pull_request:
    branches:
-     - qa
+     - dev
 
 jobs:
   build:
     name: Build and test
     runs-on: ubuntu-latest
-    # if: |
-    #  (github.event_name == 'pull_request' && github.base_ref == 'qa' && github.head_ref == 'dev') ||
-    #  (github.event_name == 'push' && github.ref == 'refs/heads/qa')
 
     steps:
       - name: Checkout code
@@ -49,13 +47,35 @@ jobs:
             target/surefire-reports/*.xml
             target/site/jacoco/*.html
           if-no-files-found: warn
+      # - name: Parse Maven Logs
+      #   id: parse
+      #   uses: ./.github/actions/parse-maven-logs
+      #   with:
+      #     build_status: ${{ job.status }}
+
+      # - name: Generate HTML report
+      #   run: echo "${{ steps.parse.outputs.log_summary }}" > report.html
+        
+      # - name: Debug report.html
+      #   run: |
+      #     echo "Report HTML:"
+      #     cat report.html
+
+      # - name: Email Notification
+      #   if: always()
+      #   uses: ./.github/actions/email-notify
+      #   with:
+      #     status: ${{ steps.build.outputs.status == '0' && 'success' || 'failure' }}
+      #     environment: dev
+      #     email_config: ${{ vars.EMAIL_CONFIG }}
+      #     summary: ${{ steps.parse.outputs.log_summary }}
           
   deploy:
+    if: github.event_name == 'push'
     needs: build
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/qa'
     env:
-        IMAGE_NAME: "vamika-backend-qa"
+        IMAGE_NAME: "vamika-backend"
         BUILDER_IMAGE: "maven:3.9.9-ibm-semeru-17-focal"
     steps:
         - name: Checkout code
@@ -88,8 +108,23 @@ jobs:
             git config --global user.name "vamshireddy24"
             git clone https://github.com/vamika-store/vamika-backend.git
             cd vamika-backend
-            git checkout qa
-            sed -i "s|tag: .*|tag: \"${{ env.VERSION }}\"|g" charts/vm-microservice/values-qa.yaml
-            git add charts/vm-microservice/values-qa.yaml
-            git commit -m "Update backend [qa] image tag to ${{ env.VERSION }} [skip ci]"
-            git push https://x-access-token:${{ secrets.GH_PAT }}@github.com/vamika-store/vamika-backend.git qa
+            git checkout dev
+            sed -i "s|tag: .*|tag: \"${{ env.VERSION }}\"|g" charts/vm-microservice/values.yaml
+            git add charts/vm-microservice/values.yaml
+            git commit -m "Update backend[dev] image tag to ${{ env.VERSION }} [skip ci]"
+            git push https://x-access-token:${{ secrets.GH_PAT }}@github.com/vamika-store/vamika-backend.git dev
+
+      # - name: Send Test Reports via Email
+      #   uses: dawidd6/action-send-mail@v3
+      #   with:
+      #     server_address: "smtp.gmail.com"
+      #     server_port: "587"
+      #     username: "vamika6522@gmail.com"
+      #     password: "arjvepxvfdrctuei"
+      #     subject: "Test Reports - Build #${{ github.run_number }}"
+      #     to: "chvamshikrishna24@gmail.com"
+      #     from: "vamika6522@gmail.com"
+      #     body: "Please find the attached test reports."
+      #     attachments: |
+      #       target/surefire-reports/*.xml
+      #       target/site/jacoco/*.html

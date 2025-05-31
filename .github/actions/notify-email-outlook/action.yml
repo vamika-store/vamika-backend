@@ -1,0 +1,49 @@
+name: Notify Email
+
+description: Send email via Gmail using EMAIL_CONFIG secret
+
+inputs:
+  status:
+    description: Build status (success or failure)
+    required: true
+  environment:
+    description: Environment name (e.g., dev, prod)
+    required: true
+  email_config_outlook:
+    description: JSON string containing email configuration
+    required: true
+  log_summary:
+    description: Build or error log summary
+    required: false
+
+runs:
+  using: composite
+  steps:
+    - name: Parse EMAIL_CONFIG input
+      shell: bash
+      run: |
+        echo '${{ inputs.email_config_outlook }}' > email_config_outlook.json
+        echo "EMAIL_USERNAME=$(jq -r .username email_config_outlook.json)" >> $GITHUB_ENV
+        echo "EMAIL_PASSWORD=$(jq -r .password email_config_outlook.json)" >> $GITHUB_ENV
+        echo "EMAIL_TO=$(jq -r .to email_config_outlook.json)" >> $GITHUB_ENV
+
+    - name: Send Email
+      uses: dawidd6/action-send-mail@v3
+      with:
+        server_address: smtp.outlook.com
+        server_port: 587
+        username: ${{ env.EMAIL_USERNAME }}
+        password: ${{ env.EMAIL_PASSWORD }}
+        from: ${{ env.EMAIL_USERNAME }}
+        to: ${{ env.EMAIL_TO }} 
+        subject: "[${{ inputs.environment }}] Build ${{ inputs.status == 'success' && format('✅ Successful - {0}', github.repository) || format('❌ Failed - {0}', github.repository) }}"
+        content_type: html
+        body: |
+            Build ${{ inputs.status }} for ${{ github.repository }}
+            Environment: ${{ inputs.environment }}
+            Commit: ${{ github.sha }}
+            Actor: ${{ github.actor }}
+            Workflow: ${{ github.workflow }}
+            Run ID: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            log_summary: ${{ inputs.log_summary }}
+
