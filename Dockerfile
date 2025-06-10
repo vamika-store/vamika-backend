@@ -13,7 +13,7 @@ COPY src ./src
 RUN mvn clean package -DskipTests
 
 # ------------ Stage 2: Run JAR using minimal runtime image ------------
-FROM eclipse-temurin:17-jre-jammy
+FROM gcr.io/distroless/java17-debian11
 
 # Create app directory
 WORKDIR /vm
@@ -21,11 +21,8 @@ WORKDIR /vm
 # Copy JAR from build stage
 COPY --from=build /vm-build/target/vamika-*.jar /vm/vm-microservice.jar
 
-# Expose application port (change if needed)
+# Expose application port
 EXPOSE 8080
 
-# JVM optimizations for container
-ENV JAVA_OPTS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0"
-
 # Start the Spring Boot application
-CMD ["sh", "-c", "java $JAVA_OPTS -jar vm-microservice.jar"]
+ENTRYPOINT ["java", "-XX:+UseContainerSupport", "-XX:MaxRAMPercentage=75.0", "-jar", "vm-microservice.jar"]
