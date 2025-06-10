@@ -96,6 +96,9 @@ jobs:
               --label "COMMIT_ID=${COMMIT_ID}" \
               -t "${{ secrets.IMAGE_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.VERSION }}" \
               .
+        - name: Docker image
+          run: |
+            docker images
         - name: Push Docker image
           run: |
             docker push ${{ secrets.IMAGE_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.VERSION }}
