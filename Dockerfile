@@ -1,22 +1,28 @@
-ARG BUILDER_IMAGE=maven:3.9.9-ibm-semeru-17-focal
-FROM ${BUILDER_IMAGE}
+# ------------ Stage 1: Build JAR using Maven ------------
+ARG MAVEN_IMAGE=maven:3.9.9-ibm-semeru-17-focal
+FROM ${MAVEN_IMAGE} AS build
 
-# Set the working directory
+# Set working directory for build
 WORKDIR /vm-build
 
-# Copy source code
-COPY . .
+# Copy Maven project files
+COPY pom.xml .
+COPY src ./src
 
-# Build the code
-RUN mvn clean \
-    && mvn -DskipTests=true package \
-    && mkdir -p /vm \
-    && mv /vm-build/target/vamika-*.jar /vm/vm-microservice.jar \
-    && rm -rf /vm-build/*
+# Build the application (skip tests for faster build)
+RUN mvn clean package -DskipTests
 
-# Set the working directory
+# ------------ Stage 2: Run JAR using minimal runtime image ------------
+FROM gcr.io/distroless/java17-debian11
+
+# Create app directory
 WORKDIR /vm
 
-# Set the entry point to run the jar
+# Copy JAR from build stage
+COPY --from=build /vm-build/target/vamika-*.jar /vm/vm-microservice.jar
 
-CMD ["java", "-jar", "vm-microservice.jar"]
+# Expose application port
+EXPOSE 8080
+
+# Start the Spring Boot application
+ENTRYPOINT ["java", "-XX:+UseContainerSupport", "-XX:MaxRAMPercentage=75.0", "-jar", "vm-microservice.jar"]
