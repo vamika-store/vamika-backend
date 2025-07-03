@@ -1,9 +1,11 @@
 package com.vamikastore.vamika.auth.config;
 
+import com.vamikastore.vamika.auth.exceptions.RESTAuthenticationEntryPoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -27,15 +29,20 @@ public class WebSecurityConfig {
     @Autowired
     private JWTTokenHelper jwtTokenHelper;
 
-    private final String[] publicApis = {"/api/auth/**"};
+    private static final String[] publicApis = {"/v3/api-docs/**", "/swagger-ui/**"};
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests((authorize) -> authorize
-                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**").permitAll()
-                        .requestMatchers("/api/auth/login", "/api/auth/register").permitAll()
-                        .anyRequest().authenticated())
-                .addFilterBefore(new JWTAuthenticationFilter(jwtTokenHelper,userDetailsService), UsernamePasswordAuthenticationFilter.class);
+        http
+            .csrf().disable()
+            .authorizeHttpRequests((authorize) -> authorize
+                .requestMatchers("/v3/api-docs/**", "/swagger-ui/**").permitAll()
+                .requestMatchers("/api/auth/login", "/api/auth/register",  "/api/auth/verify").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/products", "/api/category").permitAll()
+                .anyRequest().authenticated()
+            )
+            .addFilterBefore(new JWTAuthenticationFilter(jwtTokenHelper, userDetailsService), UsernamePasswordAuthenticationFilter.class)
+            .exceptionHandling().authenticationEntryPoint(new RESTAuthenticationEntryPoint()); // Optional: custom 401 handler
         return http.build();
     }
 

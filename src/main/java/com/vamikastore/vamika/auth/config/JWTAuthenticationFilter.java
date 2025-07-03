@@ -20,7 +20,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
     private final JWTTokenHelper jwtTokenHelper;
 
     public JWTAuthenticationFilter(JWTTokenHelper jwtTokenHelper, UserDetailsService userDetailsService) {
-        this.jwtTokenHelper = new JWTTokenHelper();
+        this.jwtTokenHelper = jwtTokenHelper;
         this.userDetailsService = userDetailsService;
     }
 
@@ -36,7 +36,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         }
 
         try {
-            String authToken = JWTTokenHelper.getToken(request);
+            String authToken = jwtTokenHelper.getToken(request);
             System.out.println("Extracted Token: " + authToken); // Debug: Log the extracted token
 
             if (authToken != null) {
@@ -54,9 +54,9 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
                     }
                 }
             }
+            filterChain.doFilter(request, response);
         } catch (Exception e) {
             System.out.println("JWT token validation failed: " + e.getMessage());
         }
-        filterChain.doFilter(request, response);
     }
 }

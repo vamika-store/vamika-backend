@@ -44,8 +44,8 @@ public class JWTTokenHelper {
         return new Date(System.currentTimeMillis() + expiresIn * 1000L);
     }
 
-    public static String getToken(HttpServletRequest request) {
-        String authHeader = getAuthHeaderFromHeader(request);
+    public String getToken(HttpServletRequest request) {
+        String authHeader = request.getHeader("Authorization");
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             return authHeader.substring(7);
         }
@@ -53,14 +53,32 @@ public class JWTTokenHelper {
     }
 
     public Boolean validateToken(String token, UserDetails userDetails) {
-        final String username = getUserNameFromToken(token);
-        return (
-                username != null && username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+        try {
+            final Claims claims = getAllClaimsFromToken(token);
+
+            if (claims == null) {
+                return false; // Failed to parse token
+            }
+
+            final String username = claims.getSubject();
+            final String tokenIssuer = claims.getIssuer();
+
+            // Check username matches, token not expired, and issuer is correct
+            return (username != null
+                    && username.equals(userDetails.getUsername())
+                    && !isTokenExpired(token)
+                    && appName.equals(tokenIssuer)
+            );
+        } catch (Exception e) {
+            System.err.println("Token validation error: " + e.getMessage());
+            return false;
+        }
     }
+
 
     private boolean isTokenExpired(String token) {
         Date expireDate = getExpirationDate(token);
-        return expireDate.before(new Date());
+        return expireDate == null || expireDate.before(new Date());
     }
 
     private Date getExpirationDate(String token) {
@@ -74,9 +92,6 @@ public class JWTTokenHelper {
         return expireDate;
     }
 
-    private static String getAuthHeaderFromHeader(HttpServletRequest request) {
-        return request.getHeader("Authorization");
-    }
     public String getUserNameFromToken(String authToken) {
         String username;
         try {

@@ -14,7 +14,7 @@ public class EmailService {
     private JavaMailSender javaMailSender;
 
     @Value("${spring.mail.username}")
-    private String senderEmail;
+    private String sender;
 
     public String sendMail(User user) {
         String subject = "Email Verification";
@@ -27,13 +27,14 @@ public class EmailService {
 
         try {
             SimpleMailMessage mailMessage = new SimpleMailMessage();
-            mailMessage.setFrom(senderEmail);
+            mailMessage.setFrom(sender);
             mailMessage.setTo(user.getEmail());
             mailMessage.setText(mailContent);
             mailMessage.setSubject(subject);
             javaMailSender.send(mailMessage);
         }
         catch (Exception e) {
+            e.printStackTrace();
             return "Error while sending email: " + e.getMessage();
         }
         return "Email sent successfully to " + user.getEmail();
