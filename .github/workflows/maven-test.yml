@@ -1,0 +1,102 @@
+name: UAT Actions Build and Test (Module Wise)
+
+on:
+  workflow_dispatch:
+    inputs:
+      module_name:
+        type: string
+        description: "Maven sub-module to test (leave blank for root)"
+        required: false
+        default: ""
+      test_names_list:
+        type: string
+        description: "List of test names to run"
+        required: false
+        default: ""
+      only_first_execution:
+        type: boolean
+        description: "Run only the first execution"
+        default: false
+      upload_to_zephyr:
+        type: boolean
+        description: "Upload results to Zephyr"
+        default: false
+      zephyr_cycle:
+        type: string
+        description: "Zephyr cycle name"
+        required: false
+        default: "Github_Actions_Cycle"
+      overwrite_params:
+        type: string
+        description: "Overwrite execution parameters"
+        default: "{\n\t\n}"
+      batch_time:
+        type: string
+        description: "Batch time for scheduling"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    # env:
+    #   API_CONSUMER_KEY: ${{ secrets.DEV_CONSUMER_KEY }}
+    #   API_PRIVATE_KEY: ${{ secrets.DEV_PRIVATE_KEY }}
+    #   SONAR_HOST_URL: 'https://sonarqubeenterprise.pgcloud.com/sonarqube'
+    #   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+    #   TEST_NAMES_LIST: ${{ inputs.test_names_list }}
+    #   ONLY_FIRST_EXECUTION: ${{ inputs.only_first_execution }}
+    #   UPLOAD_TO_ZEPHYR: ${{ inputs.upload_to_zephyr }}
+    #   ZEPHYR_CYCLE: ${{ inputs.zephyr_cycle }}
+    #   OVERWRITE_PARAMS: ${{ inputs.overwrite_params }}
+    #   BATCH_TIME: ${{ inputs.batch_time }}
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'adopt'
+        java-version: '17'
+        cache: maven
+
+    - name: Debug Environment Variables
+      run: env
+
+    - name: Install dependencies
+      run: mvn clean install
+
+    - name: Run Tests (Module/Package Wise)
+      run: |
+        if [ -n "${{ inputs.module_name }}" ]; then
+          TEST_PATH="src/test/java/com/vamikastore/vamika/${{ inputs.module_name }}"
+          echo "Looking for tests in: $TEST_PATH"
+          TEST_CLASSES=$(find $TEST_PATH -name '*Test.java' | sed 's|src/test/java/||;s|/|.|g;s|.java$||' | paste -sd, -)
+          if [ -z "$TEST_CLASSES" ]; then
+            echo "No test classes found in $TEST_PATH"
+            exit 1
+          fi
+          echo "Running tests: $TEST_CLASSES"
+          mvn test \
+            -Dtest="$TEST_CLASSES" \
+            -Dexecution.headless=true \
+            -Ddebug.attachDriverSession=false \
+            -Ddebug.onlyFirstExecution=${{ env.ONLY_FIRST_EXECUTION }} \
+            -Djira.connection.enabled=${{ env.UPLOAD_TO_ZEPHYR }} \
+            -Djira.cycle.name="${{ env.ZEPHYR_CYCLE }}" \
+            -DfailIfNoTests=false \
+            -Dexecution.params.overwrite="${{ env.OVERWRITE_PARAMS }}"
+        else
+          echo "Running tests for root project"
+          mvn test \
+            -Dtest="${{ inputs.test_names_list }}" \
+            -Dexecution.headless=true \
+            -Ddebug.attachDriverSession=false \
+            -Ddebug.onlyFirstExecution=${{ env.ONLY_FIRST_EXECUTION }} \
+            -Djira.connection.enabled=${{ env.UPLOAD_TO_ZEPHYR }} \
+            -Djira.cycle.name="${{ env.ZEPHYR_CYCLE }}" \
+            -DfailIfNoTests=false \
+            -Dexecution.params.overwrite="${{ env.OVERWRITE_PARAMS }}"
+        fi
+
