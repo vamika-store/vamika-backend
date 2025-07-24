@@ -52,7 +52,7 @@ public class WebSecurityConfig {
             .authorizeHttpRequests((authorize) -> authorize
                 .requestMatchers("/v3/api-docs/**", "/swagger-ui/**").permitAll()
                 .requestMatchers("/api/auth/login", "/api/address", "/login/*", "/api/auth/register",  "/api/auth/verify").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/products", "/api/category").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/products/**", "/api/category/**", "/api/auth/**").permitAll()
                     .requestMatchers("/oauth2/success").permitAll()
                 .anyRequest().authenticated())
                 .oauth2Login((oauth2login) -> oauth2login.defaultSuccessUrl("/oauth2/success").loginPage("/oauth2/authentication/google"))
